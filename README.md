@@ -4,16 +4,22 @@ A simple nagios plugin to monitor Couchbase 2.0 servers/cluster.
 
 ## Aim
 Main aim of this project is making a nagions plugin for Couchbase 2.0 Community Edition.
+It should be useful for all CB admins and check all metrics which on CB management console.
+
+### Project examples
+* https://github.com/mzupan/nagios-plugin-mongodb
+* https://github.com/jasonhancock/nagios-redis
+* http://nagiosplugins.org/man/check_http
 
 
 ## Requirenments
 * Ability to code with Python, Perl or Bash. Python is plus.
 * Basic knowledge of monitoring tools and NOSQL.
 * Good research and documentation abilities.
-* Military service must be completed for male candidates. (joke :)
+* Military service must be completed for male candidates.
 
 ## Skills to be Gained
-* Knowledge of basic linux and administration skill is plus.
+* Knowledge of basic linux and administration skills.
 * Scripting ability.
 * Knowledge of monitoring tools usage.
 * Knowledge of NOSQL databases basics.
