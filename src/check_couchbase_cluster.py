@@ -15,8 +15,9 @@ try:
 	url = ''.join(['http://', options.ip, '/pools/', options.bucket])
 	r = requests.get(url, auth=(options.username, options.password))
 	result = r.json()
-	for key, values in result.items():
-		print key,": ", values
+	result = json.dumps(result)
+	print result
+
 except Exception:
 	print "Invalid option combination"
 	print "Try '--help' for more information "
