@@ -27,7 +27,7 @@ parser.add_option('-s', dest='server')
 parser.add_option('-u', dest='username')
 parser.add_option('-p', dest='password')
 parser.add_option('-b', dest='bucket')
-parser.add_option('--OPS', action='callback', callback=option_none, dest='operations_per_second', default="abc")
+parser.add_option('--OPS', action='callback', callback=option_none, dest='operations_per_second')
 options, args = parser.parse_args()
 
 try:
@@ -39,8 +39,6 @@ try:
 	else:
 		result = json.dumps(result)
 		print result
-
-
 except Exception:
     print "Invalid option combination"
     print "Try '--help' for more information "
