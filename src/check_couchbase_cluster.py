@@ -24,7 +24,6 @@ parser = OptionParser()
 parser.disable_interspersed_args()
 #options
 parser.add_option('-I', dest='ip')
-parser.add_option('-s', dest='server')
 parser.add_option('-u', dest='username')
 parser.add_option('-p', dest='password')
 parser.add_option('-b', dest='bucket')
