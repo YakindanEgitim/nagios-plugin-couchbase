@@ -17,6 +17,17 @@ def check_ops_per_second(result):
 	basicStats = result['basicStats']
 	print "opsPerSec:",  basicStats['opsPerSec']
 
+def check_mem_usage(result):
+	basicStats = result['basicStats']
+	print "memUsed: ", basicStats['memUsed']
+	nodes = result['nodes']
+	nodes = dict(nodes[0])
+	interestingStats = nodes['interestingStats']
+	print "nodes:  "
+	print "memoryFree: ", nodes['memoryFree']
+	print "memoryTotal: ", nodes['memoryTotal']
+	print "interestingStats MemUsed: ", interestingStats['mem_used']
+	
 parser = OptionParser()
 parser.disable_interspersed_args()
 #options
@@ -26,6 +37,7 @@ parser.add_option('-u', dest='username')
 parser.add_option('-p', dest='password')
 parser.add_option('-b', dest='bucket')
 parser.add_option('--OPS', action='callback', callback=option_none, dest='operations_per_second')
+parser.add_option('--mem', action='callback', callback=option_none, dest='memoryUsage')
 options, args = parser.parse_args()
 
 try:
@@ -34,6 +46,8 @@ try:
 	result = r.json()
 	if options.operations_per_second:
 		check_ops_per_second(result)
+	if options.memoryUsage:
+		check_mem_usage(result)
 	else:
 		result = json.dumps(result)
 		print result
