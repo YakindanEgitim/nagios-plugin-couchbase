@@ -4,15 +4,13 @@ import requests
 import json
 import sys
 
-ops = False
 #option required none
 def option_none(option, opt, value, parser):
 	if parser.rargs and not parser.rargs[0].startswith('-'):
 		print "Option arg error"
 		print opt, " option should be empty"
 		sys.exit(2)
-	global ops
-	ops = True
+	setattr(parser.values, option.dest, True)
 		
 def check_ops_per_second(result):
 	# basic bucket stats  from json
@@ -34,7 +32,7 @@ try:
 	url = ''.join(['http://', options.ip, '/pools/', options.server, '/buckets/',  options.bucket])
 	r = requests.get(url, auth=(options.username, options.password))
 	result = r.json()
-	if ops:
+	if options.operations_per_second:
 		check_ops_per_second(result)
 	else:
 		result = json.dumps(result)
