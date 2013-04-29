@@ -37,6 +37,8 @@ def check_disk_read(result):
 
 parser = OptionParser()
 parser.disable_interspersed_args()
+arg = False
+
 #options
 parser.add_option('-I', dest='ip')
 parser.add_option('-u', dest='username')
@@ -53,11 +55,14 @@ try:
 	result = r.json()
 	if options.operations_per_second:
 		check_ops_per_second(result)
+		arg = True
 	if options.memoryUsage:
 		check_mem_usage(result)
+		arg = True
 	if options.disk_read:
 		check_disk_read(result)
-	else:
+		arg = True
+	if not arg:
 		result = json.dumps(result)
 		print result
 
