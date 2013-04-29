@@ -1,4 +1,9 @@
 from distutils.core import setup
+import glob
+#from distribute_setup import use_setuptools
+#use_setuptools()
+
+#from setuptools import setup
  
 setup(
 	name = "Couchbase Nagios Plugin",
@@ -7,7 +12,6 @@ setup(
 	author = "Ebru Akagunduz",
 	author_email = "ebru.akagunduz@gmail.com",
 	packages = ['src'],
-	scripts = ['src/check_couchbase_cluster.py', 'src/check_couchbase_server.py'],
+	data_files = [('/usr/lib/nagios/plugins/', glob.glob("src/*py"))]
 )
-
 
