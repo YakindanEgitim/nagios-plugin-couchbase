@@ -13,7 +13,12 @@ def option_none(option, opt, value, parser):
 		print opt, " option should be empty"
 		sys.exit(2)
 	setattr(parser.values, option.dest, True)
-		
+
+def check_item_count(result):
+	basicStats = result['basicStats']
+	item_count = basicStats['itemCount']
+	print "Item count: ", item_count
+
 def check_ops_per_second(result):
 	# basic bucket stats  from json
 	basicStats = result['basicStats']
@@ -45,8 +50,7 @@ def check_mem_usage(result):
 
 def check_disk_read(result):
 	basicStats = result['basicStats']
-	#print "diskFetches:", basicStats['diskFetches']
-	
+	print "diskFetches:", basicStats['diskFetches']
 	
 parser = OptionParser()
 parser.disable_interspersed_args()
@@ -63,6 +67,7 @@ parser.add_option('-C', dest='critical')
 parser.add_option('--OPS', action='callback', callback=option_none, dest='operations_per_second')
 parser.add_option('--mem', action='callback', callback=option_none, dest='memoryUsage')
 parser.add_option('--disk-read', action='callback', callback=option_none, dest='disk_read')
+parser.add_option('--item-count', action='callback', callback=option_none, dest='item_count')
 options, args = parser.parse_args()
 
 try:
@@ -77,6 +82,9 @@ try:
 		arg = True
 	if options.disk_read:
 		check_disk_read(result)
+		arg = True
+	if options.item_count:
+		check_item_count(result)
 		arg = True
 	if not arg:
 		result = json.dumps(result)
