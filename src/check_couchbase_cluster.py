@@ -58,6 +58,13 @@ def check_del_per_second():
 		if count == 120:
 			print stat
 
+def check_low_watermark():
+	count = 0
+	cbstats = os.popen(''.join(['/opt/couchbase/bin/cbstats ', options.ip, ':11210 ', '-b ', options.bucket, ' all']))
+	for stat in cbstats.readlines():
+		count += 1
+		if count == 110:
+			print stat
 
 parser = OptionParser()
 parser.disable_interspersed_args()
@@ -75,6 +82,7 @@ parser.add_option('--disk-read', action='callback', callback=option_none, dest='
 parser.add_option('--item-count', action='callback', callback=option_none, dest='item_count')
 parser.add_option('--CAS', action='callback', callback=option_none, dest='cas')
 parser.add_option('--del-ps-check', action='callback', callback=option_none, dest='del_ps_check')
+parser.add_option('--low-watermark', action='callback', callback=option_none, dest='low_watermark')
 options, args = parser.parse_args()
 
 try:
@@ -86,6 +94,9 @@ try:
 		arg = True
 	if options.del_ps_check:
 		check_del_per_second()
+		arg = True
+	if options.low_watermark:
+		check_low_watermark()
 		arg = True
 	if options.cas:
 		check_cas_per_second()
