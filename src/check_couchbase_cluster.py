@@ -66,6 +66,14 @@ def check_low_watermark():
 		if count == 110:
 			print stat
 
+def check_high_watermark():
+	count = 0
+	cbstats = os.popen(''.join(['/opt/couchbase/bin/cbstats ', options.ip, ':11210 ', '-b ', options.bucket, ' all']))
+	for stat in cbstats.readlines():
+		count += 1
+		if count == 109:
+			print stat
+
 parser = OptionParser()
 parser.disable_interspersed_args()
 arg = False
@@ -83,6 +91,7 @@ parser.add_option('--item-count', action='callback', callback=option_none, dest=
 parser.add_option('--CAS', action='callback', callback=option_none, dest='cas')
 parser.add_option('--del-ps-check', action='callback', callback=option_none, dest='del_ps_check')
 parser.add_option('--low-watermark', action='callback', callback=option_none, dest='low_watermark')
+parser.add_option('--high-watermark', action='callback', callback=option_none, dest='high_watermark')
 options, args = parser.parse_args()
 
 try:
@@ -97,6 +106,9 @@ try:
 		arg = True
 	if options.low_watermark:
 		check_low_watermark()
+		arg = True
+	if options.high_watermark:
+		check_high_watermark()
 		arg = True
 	if options.cas:
 		check_cas_per_second()
