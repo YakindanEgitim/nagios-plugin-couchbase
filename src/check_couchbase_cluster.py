@@ -44,12 +44,11 @@ def check_disk_read(result):
 
 def check_cas_per_second():
     count = 0
-    cbstats = os.popen("/opt/couchbase/bin/cbstats localhost:11210 all")
+    cbstats = os.popen(''.join(['/opt/couchbase/bin/cbstats ', options.ip, ':11210 ', '-b ', options.bucket, ' all']))
     for stat in cbstats.readlines():
         count += 1
         if count == 10:
             print stat
-
 
 parser = OptionParser()
 parser.disable_interspersed_args()
