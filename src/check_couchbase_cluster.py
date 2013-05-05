@@ -3,6 +3,7 @@ from optparse import OptionParser
 import requests
 import json
 import sys
+import os
 
 #option required none
 def option_none(option, opt, value, parser):
@@ -41,6 +42,15 @@ def check_disk_read(result):
 	basicStats = result['basicStats']
 	print "diskFetches: ", basicStats['diskFetches']
 
+def check_cas_per_second():
+    count = 0
+    cbstats = os.popen("/opt/couchbase/bin/cbstats localhost:11210 all")
+    for stat in cbstats.readlines():
+        count += 1
+        if count == 10:
+            print stat
+
+
 parser = OptionParser()
 parser.disable_interspersed_args()
 arg = False
@@ -54,6 +64,7 @@ parser.add_option('--OPS', action='callback', callback=option_none, dest='operat
 parser.add_option('--mem', action='callback', callback=option_none, dest='memoryUsage')
 parser.add_option('--disk-read', action='callback', callback=option_none, dest='disk_read')
 parser.add_option('--item-count', action='callback', callback=option_none, dest='item_count')
+parser.add_option('--CAS', action='callback', callback=option_none, dest='cas')
 options, args = parser.parse_args()
 
 try:
@@ -62,6 +73,9 @@ try:
 	result = r.json()
 	if options.operations_per_second:
 		check_ops_per_second(result)
+		arg = True
+	if options.cas:
+		check_cas_per_second()
 		arg = True
 	if options.item_count:
 		check_item_count(result)
