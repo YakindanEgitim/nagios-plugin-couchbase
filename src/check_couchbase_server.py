@@ -78,6 +78,7 @@ parser.add_option('-I', dest='ip')
 parser.add_option('-s', dest='server')
 parser.add_option('-u', dest='username')
 parser.add_option('-p', dest='password')
+parser.add_option('-P', dest='port')
 parser.add_option('-b', dest='bucket')
 parser.add_option('-W', dest='warning')
 parser.add_option('-C', dest='critical')
@@ -90,7 +91,7 @@ parser.add_option('--del-ps-check', action='callback', callback=option_none, des
 options, args = parser.parse_args()
 
 try:
-	url = ''.join(['http://', options.ip, '/pools/', options.server, '/buckets/',  options.bucket])
+	url = ''.join(['http://', options.ip, ':', options.port, '/pools/', options.server, '/buckets/',  options.bucket])
 	r = requests.get(url, auth=(options.username, options.password))
 	result = r.json()
 	if options.operations_per_second:

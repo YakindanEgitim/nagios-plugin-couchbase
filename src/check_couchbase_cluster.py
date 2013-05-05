@@ -58,6 +58,7 @@ arg = False
 parser.add_option('-I', dest='ip')
 parser.add_option('-u', dest='username')
 parser.add_option('-p', dest='password')
+parser.add_option('-P', dest='port')
 parser.add_option('-b', dest='bucket')
 parser.add_option('--OPS', action='callback', callback=option_none, dest='operations_per_second')
 parser.add_option('--mem', action='callback', callback=option_none, dest='memoryUsage')
@@ -67,7 +68,7 @@ parser.add_option('--CAS', action='callback', callback=option_none, dest='cas')
 options, args = parser.parse_args()
 
 try:
-	url = ''.join(['http://', options.ip, '/pools/', options.bucket, '/buckets/'])
+	url = ''.join(['http://', options.ip, ':', options.port, '/pools/', options.bucket, '/buckets/'])
 	r = requests.get(url, auth=(options.username, options.password))
 	result = r.json()
 	if options.operations_per_second:
