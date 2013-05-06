@@ -5,7 +5,7 @@ import json
 import sys
 import os
 
-nagios_codes = {'OK': 0, 'WARNING': 1, 'CRITICAL': 2,}
+nagios_codes = {'OK': 0, 'WARNING': 1, 'CRITICAL': 2, 'UNKNOWN':3, 'DEPENDENT':4,}
 
 #option required none
 def option_none(option, opt, value, parser):
@@ -19,6 +19,12 @@ def check_item_count(result):
 	basicStats = result['basicStats']
 	item_count = basicStats['itemCount']
 	print "Item count: ", item_count
+	if item_count <= options.warning:
+		return sys.exit(nagios_codes['WARNING'])
+	elif item_count <= options.critical:
+		return sys.exit(nagios_codes['CRITICAL'])
+	else:
+		sys.exit(nagios_codes['OK'])
 
 def check_ops_per_second(result):
 	# basic bucket stats  from json
@@ -45,11 +51,22 @@ def check_mem_usage(result):
 	print "nodes:  "
 	print "memoryFree: ", nodes['memoryFree']
 	print "memoryTotal: ", nodes['memoryTotal']
-	print "interestingStats MemUsed: ", interestingStats['mem_used']
+	if basicStats['memUsed'] == options.warning:
+		return sys.exit(nagios_codes['WARNING'])
+	elif basicStats['memUsed'] == options.critical:
+		return sys.exit(nagios_codes['CRITICAL'])
+	else:
+		return sys.exit(nagios_codes['OK'])
 
 def check_disk_read(result):
 	basicStats = result['basicStats']
 	print "diskFetches:", basicStats['diskFetches']
+	if basicStats['diskFetches'] == options.warning:
+		return sys.exit(nagios_codes['WARNING'])
+	elif basicStats['diskFetches'] == options.critical:
+		return sys.exit(nagios_codes['CRITICAL'])
+	else:
+		return sys.exit(nagios_codes['OK'])
 
 def check_cas_per_second():
 	count = 0
@@ -58,7 +75,13 @@ def check_cas_per_second():
 		count += 1
 		if count == 10:
 			print stat
-
+	if stat == options.warning:
+		return sys.exit(nagios_codes['WARNING'])
+	elif stat == options.critical:
+		return sys.exit(nagios_codes['CRITICAL'])
+	else:
+		return sys.exit(nagios_codes['OK'])
+		
 def check_del_per_second():
 	count = 0
 	cbstats = os.popen(''.join(['/opt/couchbase/bin/cbstats ', options.server, ':11210 ', '-b ', options.bucket, ' all']))
@@ -66,6 +89,12 @@ def check_del_per_second():
 		count += 1
 		if count == 120:
 			print stat	
+	if stat == options.warning:
+		return sys.exit(nagios_codes['WARNING'])
+	elif stat == options.critical:
+		return sys.exit(nagios_codes['CRITICAL'])
+	else:
+		return sys.exit(nagios_codes['OK'])
 
 def check_low_watermark():
 	count = 0
@@ -74,6 +103,12 @@ def check_low_watermark():
 		count += 1
 		if count == 110:
 			print stat
+	if stat == options.warning:
+		return sys.exit(nagios_codes['WARNING'])
+	elif stat == options.critical:
+		return sys.exit(nagios_codes['CRITICAL'])
+	else:
+		return sys.exit(nagios_codes['OK'])
 
 def check_high_watermark():
 	count = 0
@@ -82,6 +117,12 @@ def check_high_watermark():
 		count += 1
 		if count == 109:
 			print stat
+	if stat == options.warning:
+		return sys.exit(nagios_codes['WARNING'])
+	elif stat == options.critical:
+		return sys.exit(nagios_codes['CRITICAL'])
+	else:
+		return sys.exit(nagios_codes['OK'])
 
 parser = OptionParser()
 parser.disable_interspersed_args()
