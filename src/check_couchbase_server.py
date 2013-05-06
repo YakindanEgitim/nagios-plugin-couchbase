@@ -23,13 +23,11 @@ def check_item_count(result):
 def check_ops_per_second(result):
 	# basic bucket stats  from json
 	basicStats = result['basicStats']
-#	print "opsPerSecc:: ",  basicStats['opsPerSec']
+	print "opsPerSecc:: ",  basicStats['opsPerSec']
 	opsPerSec =  basicStats['opsPerSec']
 	options.warning = float(options.warning)
 	options.critical = float(options.critical)
 	if opsPerSec == 0.0 or opsPerSec <= options.warning:
-		print "WARNING"
-		print nagios_codes['WARNING']
 		return sys.exit(nagios_codes['WARNING'])
 	elif opsPerSec <= options.critical:
 		print "CRITICAL"
