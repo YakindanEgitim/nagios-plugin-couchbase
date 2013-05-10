@@ -18,12 +18,14 @@ def option_none(option, opt, value, parser):
 def check_item_count(result):
 	basicStats = result['basicStats']
 	item_count = basicStats['itemCount']
-	print "Item count: ", item_count
 	if item_count <= options.warning:
+		print "CouchBase item count WARNING ", item_count
 		return sys.exit(nagios_codes['WARNING'])
 	elif item_count <= options.critical:
+		print "CouchBase item count CRITICAL ", item_count
 		return sys.exit(nagios_codes['CRITICAL'])
 	else:
+		print "CouchBase item count OK ", item_count
 		sys.exit(nagios_codes['OK'])
 
 def check_ops_per_second(result):
@@ -34,12 +36,13 @@ def check_ops_per_second(result):
 	options.warning = float(options.warning)
 	options.critical = float(options.critical)
 	if opsPerSec == 0.0 or opsPerSec <= options.warning:
+		print "CouchBase operation per second WARNING ", opsPerSec
 		return sys.exit(nagios_codes['WARNING'])
 	elif opsPerSec <= options.critical:
-		print "CRITICAL"
+		print "CouchBase operation per second CRITICAL ", opsPerSec
 		return sys.exit(nagios_codes['CRITICAL'])
 	else:
-		print "OK"
+		print "CouchBase operation per second OK ", opsPerSec
 		return sys.exit(nagios_codes['OK'])
 
 def check_mem_usage(result):
@@ -48,24 +51,27 @@ def check_mem_usage(result):
 	nodes = result['nodes']
 	nodes = dict(nodes[0])
 	interestingStats = nodes['interestingStats']
-	print "nodes:  "
-	print "memoryFree: ", nodes['memoryFree']
-	print "memoryTotal: ", nodes['memoryTotal']
 	if basicStats['memUsed'] == options.warning:
+		print "CouchBase memory used  WARNING ", basicStats['memUsed']
 		return sys.exit(nagios_codes['WARNING'])
 	elif basicStats['memUsed'] == options.critical:
+		print "CouchBase memory used  WARNING ", basicStats['memUsed']
 		return sys.exit(nagios_codes['CRITICAL'])
 	else:
+		print "CouchBase memory used  OK ", basicStats['memUsed']
 		return sys.exit(nagios_codes['OK'])
 
 def check_disk_read(result):
 	basicStats = result['basicStats']
 	print "diskFetches:", basicStats['diskFetches']
 	if basicStats['diskFetches'] == options.warning:
+		print "CouchBase disk fetches  WARNING ", basicStats['diskFetches']
 		return sys.exit(nagios_codes['WARNING'])
 	elif basicStats['diskFetches'] == options.critical:
+		 print "CouchBase disk fetches  CRITICAL ", basicStats['diskFetches']
 		return sys.exit(nagios_codes['CRITICAL'])
 	else:
+		print "CouchBase disk fetches  OK ", basicStats['diskFetches']
 		return sys.exit(nagios_codes['OK'])
 
 def check_cas_per_second():
@@ -76,10 +82,13 @@ def check_cas_per_second():
 		if count == 10:
 			print stat
 	if stat == options.warning:
+		print "CouchBase CAS  WARNING ", stat
 		return sys.exit(nagios_codes['WARNING'])
 	elif stat == options.critical:
+		print "CouchBase CAS  CRITICAL ", stat
 		return sys.exit(nagios_codes['CRITICAL'])
 	else:
+		print "CouchBase CAS  OK ", stat
 		return sys.exit(nagios_codes['OK'])
 		
 def check_del_per_second():
@@ -90,10 +99,13 @@ def check_del_per_second():
 		if count == 120:
 			print stat	
 	if stat == options.warning:
+		print "CouchBase deletes per second  WARNING ", stat
 		return sys.exit(nagios_codes['WARNING'])
 	elif stat == options.critical:
+		print "CouchBase deletes per second  CRITICAL ", stat
 		return sys.exit(nagios_codes['CRITICAL'])
 	else:
+		print "CouchBase deletes per second OK ", stat
 		return sys.exit(nagios_codes['OK'])
 
 def check_low_watermark():
@@ -104,10 +116,13 @@ def check_low_watermark():
 		if count == 110:
 			print stat
 	if stat == options.warning:
+		print "CouchBase low water mark  WARNING ", stat
 		return sys.exit(nagios_codes['WARNING'])
 	elif stat == options.critical:
+		print "CouchBase low water mark  CRITICAL ", stat
 		return sys.exit(nagios_codes['CRITICAL'])
 	else:
+		print "CouchBase low water mark  OK ", stat
 		return sys.exit(nagios_codes['OK'])
 
 def check_high_watermark():
@@ -118,10 +133,13 @@ def check_high_watermark():
 		if count == 109:
 			print stat
 	if stat == options.warning:
+		print "CouchBase high water mark  WARNING ", stat
 		return sys.exit(nagios_codes['WARNING'])
 	elif stat == options.critical:
+		print "CouchBase high water mark  CRITICAL ", stat
 		return sys.exit(nagios_codes['CRITICAL'])
 	else:
+		print "CouchBase high water mark  OK ", stat
 		return sys.exit(nagios_codes['OK'])
 
 parser = OptionParser()
