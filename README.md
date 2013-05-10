@@ -31,3 +31,6 @@ It should be useful for all CB admins and check all metrics which on CB manageme
 * Learning NSQL basics.
 * Learning Couchbase Server 2.0 Community edition.
 * Learning Cocuhbase cli tools.
+
+##LICENSE
+Nagios Plugin Couchbase is available under the [GPLv3](http://gplv3.fsf.org/)
