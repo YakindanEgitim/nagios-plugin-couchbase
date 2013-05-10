@@ -70,7 +70,7 @@ def check_disk_read(result):
 
 def check_cas_per_second():
 	count = 0
-	cbstats = os.popen(''.join(['/opt/couchbase/bin/cbstats ', options.server, ':11210 ', '-b ', options.bucket, ' all']))
+	cbstats = os.popen(''.join([options.cbstat, ' ', options.server, ':11210 ', '-b ', options.bucket, ' all']))
 	for stat in cbstats.readlines():
 		count += 1
 		if count == 10:
@@ -84,7 +84,7 @@ def check_cas_per_second():
 		
 def check_del_per_second():
 	count = 0
-	cbstats = os.popen(''.join(['/opt/couchbase/bin/cbstats ', options.server, ':11210 ', '-b ', options.bucket, ' all']))
+	cbstats = os.popen(''.join([options.cbstat, ' ', options.server, ':11210 ', '-b ', options.bucket, ' all']))
 	for stat in cbstats.readlines():
 		count += 1
 		if count == 120:
@@ -98,7 +98,7 @@ def check_del_per_second():
 
 def check_low_watermark():
 	count = 0
-	cbstats = os.popen(''.join(['/opt/couchbase/bin/cbstats ', options.server, ':11210 ', '-b ', options.bucket, ' all']))
+	cbstats = os.popen(''.join([options.cbstat, ' ', options.server, ':11210 ', '-b ', options.bucket, ' all']))
 	for stat in cbstats.readlines():
 		count += 1
 		if count == 110:
@@ -112,7 +112,7 @@ def check_low_watermark():
 
 def check_high_watermark():
 	count = 0
-	cbstats = os.popen(''.join(['/opt/couchbase/bin/cbstats ', options.server, ':11210 ', '-b ', options.bucket, ' all']))
+	cbstats = os.popen(''.join([options.cbstat, ' ', options.server, ':11210 ', '-b ', options.bucket, ' all']))
 	for stat in cbstats.readlines():
 		count += 1
 		if count == 109:
@@ -145,6 +145,7 @@ parser.add_option('--CAS', action='callback', callback=option_none, dest='cas')
 parser.add_option('--del-ps-check', action='callback', callback=option_none, dest='del_ps_check')
 parser.add_option('--low-watermark', action='callback', callback=option_none, dest='low_watermark')
 parser.add_option('--high-watermark', action='callback', callback=option_none, dest='high_watermark')
+parser.add_option('--cbstat',  dest='cbstat')
 options, args = parser.parse_args()
 
 try:
