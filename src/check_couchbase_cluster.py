@@ -48,14 +48,15 @@ def check_mem_usage(result):
 	basicStats = result['basicStats']
 	nodes = result['nodes']
 	nodes = dict(nodes[0])
+	mem_used_mb = basicStats['memUsed']/(1024.0**2)
 	if basicStats['memUsed'] >= options.critical:
-		print "CB memory used  WARNING ", basicStats['memUsed']
+		print "CB memory used  WARNING ", mem_used_mb, " MB"
 		return sys.exit(nagios_codes['CRITICAL'])
 	elif basicStats['memUsed'] >= options.warning:
-		print "CB memory used  WARNING ", basicStats['memUsed']
+		print "CB memory used  WARNING ", mem_used_mb, " MB"
 		return sys.exit(nagios_codes['WARNING'])
 	else:
-		print "CB memory used  OK ", basicStats['memUsed']
+		print "CB memory used  OK ", mem_used_mb, " MB"
 		return sys.exit(nagios_codes['OK'])
 
 def check_disk_read(result):
@@ -110,14 +111,15 @@ def check_low_watermark():
 	for stat in cbstats.readlines():
 		count += 1
 		if count == 110:
+			low_watermark_mb = stat/(1024.0**2)
 			if stat >= options.critical:
-				print "CB low water mark  CRITICAL ", stat
+				print "CB low water mark  CRITICAL ", low_watermark_mb, " MB"
 				return sys.exit(nagios_codes['CRITICAL'])
 			elif stat >= options.warning:
-				print "CB low water mark  WARNING ", stat
+				print "CB low water mark  WARNING ", low_watermark_mb, " MB"
 				return sys.exit(nagios_codes['WARNING'])
 			else:
-				print "CB low water mark  OK ", stat
+				print "CB low water mark  OK ", low_watermark_mb, " MB"
 				return sys.exit(nagios_codes['OK'])
 
 def check_high_watermark():
@@ -126,14 +128,15 @@ def check_high_watermark():
 	for stat in cbstats.readlines():
 		count += 1
 		if count == 109:
+			high_watermark_mb = stat/(1024.0**2)
 			if stat >= options.critical:
-				print "CouchBase high water mark  CRITICAL ", stat
+				print "CouchBase high water mark  CRITICAL ", high_watermark_mb, " MB"
 				return sys.exit(nagios_codes['CRITICAL'])
 			elif stat >= options.warning:
-				print "CouchBase high water mark  WARNING ", stat
+				print "CouchBase high water mark  WARNING ", high_watermark_mb, " MB"
 				return sys.exit(nagios_codes['WARNING'])
 			else:
-				print "CouchBase high water mark  OK ", stat
+				print "CouchBase high water mark  OK ", high_watermark_mb, " MB"
 				return sys.exit(nagios_codes['OK'])
 
 parser = OptionParser()
