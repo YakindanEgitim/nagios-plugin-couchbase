@@ -15,18 +15,22 @@ def option_none(option, opt, value, parser):
 		sys.exit(2)
 	setattr(parser.values, option.dest, True)
 
-def check_item_count(result):
-	basicStats = result['basicStats']
-	item_count = basicStats['itemCount']
-	if item_count >= options.critical:
-		print "CB item count CRITICAL ", item_count
-		return sys.exit(nagios_codes['CRITICAL'])
-	elif item_count >= options.warning:
-		print "CB item count WARNING ", item_count
-		return sys.exit(nagios_codes['WARNING'])
-	else:
-		print "CB item count OK ", item_count
-		sys.exit(nagios_codes['OK'])
+def check_item_count():
+	count = 0
+	cbstats = os.popen(''.join([options.cbstat, ' ', options.server, ':11210 ', '-b ', options.bucket, ' all']))
+	for stat in cbstats.readlines():
+		count += 1
+		if count == 20:
+			item_count = stat/(1024.0**2)
+			if stat >= options.critical:
+				print "CB item count CRITICAL ", item_count
+				return sys.exit(nagios_codes['CRITICAL'])
+			elif stat >= options.warning:
+				print "CB item count WARNING ", item_count
+				return sys.exit(nagios_codes['WARNING'])
+			else:
+				print "CB item count OK ", item_count
+				sys.exit(nagios_codes['OK'])
 
 def check_ops_per_second(result):
 	# basic bucket stats  from json
@@ -192,7 +196,7 @@ try:
 		check_disk_read(result)
 		arg = True
 	if options.item_count:
-		check_item_count(result)
+		check_item_count()
 		arg = True
 	if not arg:
 		result = json.dumps(result)
