@@ -157,35 +157,8 @@ def check_high_watermark():
 			else:
 				print "CouchBase high water mark  OK ", stat_mb, " MB"
 				return sys.exit(nagios_codes['OK'])
-
-parser = OptionParser()
-parser.disable_interspersed_args()
-arg = False
-
-#options
-parser.add_option('-I', dest='ip')
-parser.add_option('-s', dest='server')
-parser.add_option('-u', dest='username')
-parser.add_option('-p', dest='password')
-parser.add_option('-P', dest='port')
-parser.add_option('-b', dest='bucket')
-parser.add_option('-W', dest='warning')
-parser.add_option('-C', dest='critical')
-parser.add_option('--OPS', action='callback', callback=option_none, dest='operations_per_second')
-parser.add_option('--mem', action='callback', callback=option_none, dest='memoryUsage')
-parser.add_option('--disk-read', action='callback', callback=option_none, dest='disk_read')
-parser.add_option('--item-count', action='callback', callback=option_none, dest='item_count')
-parser.add_option('--CAS', action='callback', callback=option_none, dest='cas')
-parser.add_option('--del-ps-check', action='callback', callback=option_none, dest='del_ps_check')
-parser.add_option('--low-watermark', action='callback', callback=option_none, dest='low_watermark')
-parser.add_option('--high-watermark', action='callback', callback=option_none, dest='high_watermark')
-parser.add_option('--cbstat',  dest='cbstat')
-options, args = parser.parse_args()
-
-try:
-	url = ''.join(['http://', options.ip, ':', options.port, '/pools/', options.server, '/buckets/',  options.bucket])
-	r = requests.get(url, auth=(options.username, options.password))
-	result = r.json()
+# which argument 
+def which_argument(result):
 	if options.operations_per_second:
 		check_ops_per_second(result)
 		arg = True
@@ -213,6 +186,72 @@ try:
 	if not arg:
 		result = json.dumps(result)
 		print result
+
+
+# option parse
+parser = OptionParser()
+parser.disable_interspersed_args()
+arg = False
+
+#option define
+parser.add_option('-I', dest='ip')
+parser.add_option('-s', dest='server')
+parser.add_option('-u', dest='username')
+parser.add_option('-p', dest='password')
+parser.add_option('-P', dest='port')
+parser.add_option('-b', dest='bucket')
+parser.add_option('-W', dest='warning')
+parser.add_option('-C', dest='critical')
+parser.add_option('--OPS', action='callback', callback=option_none, dest='operations_per_second')
+parser.add_option('--mem', action='callback', callback=option_none, dest='memoryUsage')
+parser.add_option('--disk-read', action='callback', callback=option_none, dest='disk_read')
+parser.add_option('--item-count', action='callback', callback=option_none, dest='item_count')
+parser.add_option('--CAS', action='callback', callback=option_none, dest='cas')
+parser.add_option('--del-ps-check', action='callback', callback=option_none, dest='del_ps_check')
+parser.add_option('--low-watermark', action='callback', callback=option_none, dest='low_watermark')
+parser.add_option('--high-watermark', action='callback', callback=option_none, dest='high_watermark')
+parser.add_option('--cbstat',  dest='cbstat')
+options, args = parser.parse_args()
+
+try:
+	url = ''.join(['http://', options.ip, ':', options.port, '/pools/', options.server, '/buckets/',  options.bucket])
+	r = requests.get(url, auth=(options.username, options.password))
+	if r.status_code == 200:
+		result = r.json()
+		which_argument(result)
+	elif r.status_code == 201:
+		print "201 Created\n Request to create a new resource is successful, but no HTTP response body returns. "
+		print "Request to create a new resource is successful, but no HTTP response body returns."
+	elif r.status_code == 202:
+		print "202 Accepted"
+		print "The request is accepted for processing, but processing is not complete."
+	elif r.status_code == 204:
+		print "204 No Content"
+		print "The server fulfilled the request, but does not need to return a response body."
+	elif r.status_code == 400:
+		print "400 Bad Request"
+		print "The request could not be processed because it contains missing or invalid information"
+	elif r.status_code == 401:
+		print "401 Unauthorized"
+		print "The credentials provided with this request are missing or invalid."
+	elif r.status_code == 403:
+		print "403 Forbidden"
+		print "The server recognized the given credentials, but you do not possess proper access to perform this request."
+	elif r.status_code == 404:
+		print "404 Not Found"
+		print "URI you provided in a request does not exist."
+	elif r.status_code == 405:
+		print "405 Method Not Allowed"
+	elif r.status_code == 406:
+		print "406 Not Acceptable"		
+	elif r.status_code == 409:
+		print "409 Conflict"
+	elif r.status_code == 500:
+		print "500 Internal Server Error"
+	elif r.status_code == 501:
+		print "501 Not Implemented"
+	elif r.status_code == 503:
+		print "503 Service Unavailable"
 except Exception:
     print "Invalid option combination"
     print "Try '--help' for more information "
