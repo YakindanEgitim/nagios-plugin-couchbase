@@ -4,6 +4,7 @@ import requests
 import json
 import sys
 import os
+import re
 
 nagios_codes = {'OK': 0, 'WARNING': 1, 'CRITICAL': 2, 'UNKNOWN':3, 'DEPENDENT':4,}
 
@@ -20,15 +21,19 @@ def check_item_count(result):
 	cbstats = os.popen(''.join([options.cbstat, ' ', options.server, ':11210 ', '-b ', options.bucket, ' all']))
 	for stat in cbstats.readlines():
 		if count == 20:
-			item_count = stat/(1024.0**2)
+			# parse item count from string 
+			splitter = re.compile(r'\D')
+			item_count = int(splitter.split(stat).pop(-2))
+			# convert byte to mb
+			item_count = item_count/(1024.0**2)
 			if item_count >= options.critical:
-				print "CB item count CRITICAL ", item_count
+				print "CB item count CRITICAL ", item_count, " MB"
 				return sys.exit(nagios_codes['CRITICAL'])
 			elif item_count >= options.warning:
-				print "CB item count WARNING ", item_count
+				print "CB item count WARNING ", item_count, " MB"
 				return sys.exit(nagios_codes['WARNING'])
 			else:
-				print "CB item count OK ", item_count
+				print "CB item count OK ", item_count, " MB"
 				sys.exit(nagios_codes['OK'])
 		
 def check_ops_per_second(result):
@@ -113,7 +118,11 @@ def check_low_watermark():
 	for stat in cbstats.readlines():
 		count += 1
 		if count == 110:
-			low_watermark_mb = stat/(1024.0**2)
+			# parse low watermark from string
+			splitter = re.compile(r'\D')
+			low_watermark_mb = int(splitter.split(stat).pop(-2))
+			# convert byte to mb
+			low_watermark_mb = low_watermark_mb/(1024.0**2)
 			if stat >= options.critical:
 				print "CB low water mark  CRITICAL ", low_watermark_mb, " MB"
 				return sys.exit(nagios_codes['CRITICAL'])
@@ -130,6 +139,10 @@ def check_high_watermark():
 	for stat in cbstats.readlines():
 		count += 1
 		if count == 109:
+			# parse high watermark from string
+			splitter = re.compile(r'\D')
+			high_watermark_mb = int(splitter.split(stat).pop(-2))
+			# convert byte to mb
 			high_watermark_mb = stat/(1024.0**2)
 			if stat >= options.critical:
 				print "CouchBase high water mark  CRITICAL ", high_watermark_mb, " MB"
