@@ -26,24 +26,21 @@ def check_item_count():
 			splitter = re.compile(r'\D')
 			item_count = int(splitter.split(stat).pop(-2))
 			# convert byte to mb
-			item_count = item_count/(1024.0**2)
-			if stat >= options.critical:
-				print "CB item count CRITICAL ", item_count, " MB"
+			item_count_mb = item_count/(1024.0**2)
+			if item_count >= options.critical:
+				print "CB item count CRITICAL ", item_count_mb, " MB"
 				return sys.exit(nagios_codes['CRITICAL'])
-			elif stat >= options.warning:
-				print "CB item count WARNING ", item_count, " MB"
+			elif item_count >= options.warning:
+				print "CB item count WARNING ", item_count_mb, " MB"
 				return sys.exit(nagios_codes['WARNING'])
 			else:
-				print "CB item count OK ", item_count, " MB"
+				print "CB item count OK ", item_count_mb, " MB"
 				sys.exit(nagios_codes['OK'])
 
 def check_ops_per_second(result):
 	# basic bucket stats  from json
 	basicStats = result['basicStats']
-	print "opsPerSecc:: ",  basicStats['opsPerSec']
 	opsPerSec =  basicStats['opsPerSec']
-	options.warning = float(options.warning)
-	options.critical = float(options.critical)
 	if opsPerSec >= options.critical:
 		print "CB operation per second CRITICAL ", opsPerSec
 		return sys.exit(nagios_codes['CRITICAL'])
@@ -58,13 +55,13 @@ def check_mem_usage(result):
 	basicStats = result['basicStats']
 	nodes = result['nodes']
 	nodes = dict(nodes[0])
-	interestingStats = nodes['interestingStats']
+	mem_used = basicStats['memUsed']
 	# convert mb
 	mem_used_mb = basicStats['memUsed']/(1024.0**2)
-	if basicStats['memUsed'] >= options.critical:
+	if mem_used >= options.critical:
 		print "CB memory used CRITICAL ", mem_used_mb, " MB"
 		return sys.exit(nagios_codes['CRITICAL'])
-	elif basicStats['memUsed'] >= options.warning:
+	elif mem_used >= options.warning:
 		print "CB memory used  WARNING ", mem_used_mb, " MB"
 		return sys.exit(nagios_codes['WARNING'])
 	else:
@@ -73,7 +70,6 @@ def check_mem_usage(result):
 
 def check_disk_read(result):
 	basicStats = result['basicStats']
-	print "diskFetches:", basicStats['diskFetches']
 	if basicStats['diskFetches'] >= options.critical:
 		print "CB disk fetches  CRITICAL ", basicStats['diskFetches']
 		return sys.exit(nagios_codes['CRITICAL'])
@@ -90,14 +86,17 @@ def check_cas_per_second():
 	for stat in cbstats.readlines():
 		count += 1
 		if count == 10:
-			if stat >= options.critical:
-				print "CB CAS  CRITICAL ", stat
+			# parse cas
+			splitter = re.compile(r'\D')
+			cas = int(splitter.split(stat).pop(-2))
+			if cas >= options.critical:
+				print "CB CAS  CRITICAL ", cas
 				return sys.exit(nagios_codes['CRITICAL'])
-			elif stat >= options.warning:
-				print "CB CAS  WARNING ", stat
+			elif cas >= options.warning:
+				print "CB CAS  WARNING ", cas
 				return sys.exit(nagios_codes['WARNING'])
 			else:
-				print "CouchBase CAS  OK ", stat
+				print "CouchBase CAS  OK ", cas
 				return sys.exit(nagios_codes['OK'])
 		
 def check_del_per_second():
@@ -106,14 +105,17 @@ def check_del_per_second():
 	for stat in cbstats.readlines():
 		count += 1
 		if count == 120:
-			if stat >= options.critical:
-				print "CB deletes per second  CRITICAL ", stat
+			# parse delete per second 
+			splitter = re.compile(r'\D')
+			del_per_sec = int(splitter.split(stat).pop(-2))
+			if del_per_sec >= options.critical:
+				print "CB deletes per second  CRITICAL ", del_per_sec
 				return sys.exit(nagios_codes['CRITICAL'])
-			elif stat >= options.warning:
-				print "CB deletes per second  WARNING ", stat
+			elif del_per_sec >= options.warning:
+				print "CB deletes per second  WARNING ", del_per_sec
 				return sys.exit(nagios_codes['WARNING'])
 			else:
-				print "CB deletes per second OK ", stat
+				print "CB deletes per second OK ", del_per_sec
 				return sys.exit(nagios_codes['OK'])
 
 def check_low_watermark():
@@ -124,17 +126,17 @@ def check_low_watermark():
 		if count == 110:
 			# parse low warermark from string
 			splitter = re.compile(r'\D')
-			stat_mb = int(splitter.split(stat).pop(-2))
+			low_watermark = int(splitter.split(stat).pop(-2))
 			# convert to mb
-			stat_mb = stat_mb/(1024.0**2)
-			if stat >= options.critical:
-				print "CB low water mark  CRITICAL ", stat_mb, " MB"
+			low_watermark_mb = low_watermark/(1024.0**2)
+			if low_watermark >= options.critical:
+				print "CB low water mark  CRITICAL ", low_watermark_mb, " MB"
 				return sys.exit(nagios_codes['CRITICAL'])
-			elif stat >= options.warning:
-				print "CB low water mark  WARNING ", stat_mb, " MB"
+			elif low_watermark >= options.warning:
+				print "CB low water mark  WARNING ", low_watermark_mb, " MB"
 				return sys.exit(nagios_codes['WARNING'])
 			else:
-				print "CB low water mark  OK ", stat_mb, " MB"
+				print "CB low water mark  OK ", low_watermark_mb, " MB"
 				return sys.exit(nagios_codes['OK'])
 
 def check_high_watermark():
@@ -145,17 +147,17 @@ def check_high_watermark():
 		if count == 109:
 			# parse high watermark from string
 			splitter = re.compile(r'\D')
-			stat_mb = int(splitter.split(stat).pop(-2))
+			high_watermark = int(splitter.split(stat).pop(-2))
 			# convert to mb
-			stat_mb = stat_mb/(1024.0**2)
-			if stat >= options.critical:
-				print "CouchBase high water mark  CRITICAL ", stat_mb, " MB"
+			high_watermark_mb = stat/(1024.0**2)
+			if high_watermark >= options.critical:
+				print "CouchBase high water mark  CRITICAL ", high_watermark_mb, " MB"
 				return sys.exit(nagios_codes['CRITICAL'])
-			elif stat >= options.warning:
-				print "CouchBase high water mark  WARNING ", stat_mb, " MB"
+			elif high_watermark >= options.warning:
+				print "CouchBase high water mark  WARNING ", high_watermark_mb, " MB"
 				return sys.exit(nagios_codes['WARNING'])
 			else:
-				print "CouchBase high water mark  OK ", stat_mb, " MB"
+				print "CouchBase high water mark  OK ", high_watermark_mb, " MB"
 				return sys.exit(nagios_codes['OK'])
 # which argument 
 def which_argument(result):
@@ -200,14 +202,14 @@ parser.add_option('-u', dest='username')
 parser.add_option('-p', dest='password')
 parser.add_option('-P', dest='port')
 parser.add_option('-b', dest='bucket')
-parser.add_option('-W', dest='warning')
-parser.add_option('-C', dest='critical')
+parser.add_option('-W', type='int', dest='warning')
+parser.add_option('-C', type='int', dest='critical')
 parser.add_option('--OPS', action='callback', callback=option_none, dest='operations_per_second')
 parser.add_option('--mem', action='callback', callback=option_none, dest='memoryUsage')
 parser.add_option('--disk-read', action='callback', callback=option_none, dest='disk_read')
 parser.add_option('--item-count', action='callback', callback=option_none, dest='item_count')
 parser.add_option('--CAS', action='callback', callback=option_none, dest='cas')
-parser.add_option('--del-ps-check', action='callback', callback=option_none, dest='del_ps_check')
+parser.add_option('--del-per-second', action='callback', callback=option_none, dest='del_ps_check')
 parser.add_option('--low-watermark', action='callback', callback=option_none, dest='low_watermark')
 parser.add_option('--high-watermark', action='callback', callback=option_none, dest='high_watermark')
 parser.add_option('--cbstat',  dest='cbstat')
