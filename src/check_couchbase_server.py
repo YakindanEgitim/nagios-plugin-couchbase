@@ -41,6 +41,14 @@ def check_levels(message, status_value):
 		print "OK - " + message, status_value_mb
 		return sys.exit(nagios_codes['OK'])
 
+def check_create_per_sec():
+	vb_active_ops_create = get_status(213)
+	vb_replica_ops_create = get_status(256)
+	vb_pending_ops_create = get_status(235)
+	create_per_sec = vb_active_ops_create + vb_replica_ops_create 
+	create_per_sec += vb_pending_ops_create
+	check_levels("CB creates per sec: ", create_per_sec)
+
 def check_cache_miss_ratio():
 	ep_bg_fetched = get_status(38)
 	cmd_get = get_status(13)
@@ -214,6 +222,9 @@ def which_argument(result):
 	if options.cache_miss_ratio:
 		check_cache_miss_ratio()
 		arg = True
+	if options.create_per_sec:
+		check_create_per_sec()
+		arg = True
 	if not arg:
 		result = json.dumps(result)
 		print result
@@ -243,6 +254,7 @@ parser.add_option('--low-watermark', action='callback', callback=option_none, de
 parser.add_option('--high-watermark', action='callback', callback=option_none, dest='high_watermark')
 parser.add_option('--cbstat',  dest='cbstat')
 parser.add_option('--cache-miss-ratio', action='callback', callback=option_none, dest='cache_miss_ratio')
+parser.add_option('--create-per-sec', action='callback', callback=option_none, dest='create_per_sec')
 options, args = parser.parse_args()
 
 try:
