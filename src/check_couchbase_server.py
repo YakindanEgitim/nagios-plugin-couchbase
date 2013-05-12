@@ -41,6 +41,10 @@ def check_levels(message, status_value):
 		print "OK - " + message, status_value_mb
 		return sys.exit(nagios_codes['OK'])
 
+def check_set_per_sec():
+	cmd_set = get_status(14)
+	check_levels("CB set per sec: ", cmd_set)
+
 def check_update_per_sec():
 	vb_active_ops_update = get_status(216)
 	vb_replica_ops_update = get_status(259)
@@ -236,6 +240,9 @@ def which_argument(result):
 	if options.update_per_sec:
 		check_update_per_sec()
 		arg = True
+	if options.set_per_sec:
+		check_set_per_sec()
+		arg = True
 	if not arg:
 		result = json.dumps(result)
 		print result
@@ -267,6 +274,7 @@ parser.add_option('--cbstat',  dest='cbstat')
 parser.add_option('--cache-miss-ratio', action='callback', callback=option_none, dest='cache_miss_ratio')
 parser.add_option('--create-per-sec', action='callback', callback=option_none, dest='create_per_sec')
 parser.add_option('--update-per-sec', action='callback', callback=option_none, dest='update_per_sec')
+parser.add_option('--set-per-sec', action='callback', callback=option_none, dest='set_per_sec')
 options, args = parser.parse_args()
 
 try:
