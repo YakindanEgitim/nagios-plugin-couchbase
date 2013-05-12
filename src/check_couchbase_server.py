@@ -15,7 +15,30 @@ def option_none(option, opt, value, parser):
 		print opt, " option should be empty"
 		sys.exit(2)
 	setattr(parser.values, option.dest, True)
+	
+# get specific status using cbstat
+def get_status(required_status, message):
+	count = 0
+	cbstats = os.popen(''.join([options.cbstat, ' ', options.server, ':11210 ', '-b ', options.bucket, ' all']))
+	for status in cbstats.readlines():
+		count += 1
+		if count == required_status:
+			# parse status value
+			splitter = re.compile(r'\D')
+			status = int(splitter.split(status).pop(-2))
+			# convert to mb
+			status_mb = status/(1024.0**2)
+			if status >= options.critical:
+				print "CRITICAL - " + message, status_mb
+				return sys.exit(nagios_codes['CRITICAL'])
+			elif status >= options.warning:
+				print "WARNING - " + message, status_mb
+			else:
+				print "OK - " + message, status_mb
 
+def check_disk_read_per_sec():
+	get_status(38, "CB disk read per sec: ")
+		
 def check_item_count():
 	count = 0
 	cbstats = os.popen(''.join([options.cbstat, ' ', options.server, ':11210 ', '-b ', options.bucket, ' all']))
@@ -66,18 +89,6 @@ def check_mem_usage(result):
 		return sys.exit(nagios_codes['WARNING'])
 	else:
 		print "CB memory used  OK ", mem_used_mb, " MB"
-		return sys.exit(nagios_codes['OK'])
-
-def check_disk_read(result):
-	basicStats = result['basicStats']
-	if basicStats['diskFetches'] >= options.critical:
-		print "CB disk fetches  CRITICAL ", basicStats['diskFetches']
-		return sys.exit(nagios_codes['CRITICAL'])
-	elif basicStats['diskFetches'] >= options.warning:
-		print "CB disk fetches  WARNING ", basicStats['diskFetches']
-		return sys.exit(nagios_codes['WARNING'])
-	else:
-		print "CB disk fetches  OK ", basicStats['diskFetches']
 		return sys.exit(nagios_codes['OK'])
 
 def check_cas_per_second():
@@ -180,7 +191,7 @@ def which_argument(result):
 		check_mem_usage(result)
 		arg = True
 	if options.disk_read:
-		check_disk_read(result)
+		check_disk_read_per_sec()
 		arg = True
 	if options.item_count:
 		check_item_count()
