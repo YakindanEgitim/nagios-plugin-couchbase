@@ -41,6 +41,15 @@ def check_levels(message, status_value):
 		print "OK - " + message, status_value_mb
 		return sys.exit(nagios_codes['OK'])
 
+def check_cache_miss_ratio():
+	ep_bg_fetched = get_status(38)
+	cmd_get = get_status(13)
+	if cmd_get == 0:
+		check_levels("CB cache miss ratio: ", 0)
+	else:
+		cache_miss_ratio = ep_bg_fetched*1.0/cmd_get
+		check_levels("CB cache miss ratio: ", cache_miss_ratio)
+
 def check_disk_read_per_sec():
 	disk_read = get_status(38)
 	check_levels("CB disk read per sec: ", disk_read)
@@ -202,6 +211,9 @@ def which_argument(result):
 	if options.item_count:
 		check_item_count()
 		arg = True
+	if options.cache_miss_ratio:
+		check_cache_miss_ratio()
+		arg = True
 	if not arg:
 		result = json.dumps(result)
 		print result
@@ -230,6 +242,7 @@ parser.add_option('--del-per-second', action='callback', callback=option_none, d
 parser.add_option('--low-watermark', action='callback', callback=option_none, dest='low_watermark')
 parser.add_option('--high-watermark', action='callback', callback=option_none, dest='high_watermark')
 parser.add_option('--cbstat',  dest='cbstat')
+parser.add_option('--cache-miss-ratio', action='callback', callback=option_none, dest='cache_miss_ratio')
 options, args = parser.parse_args()
 
 try:
