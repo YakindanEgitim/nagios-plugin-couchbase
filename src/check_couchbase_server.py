@@ -17,7 +17,7 @@ def option_none(option, opt, value, parser):
 	setattr(parser.values, option.dest, True)
 	
 # get specific status using cbstat
-def get_status(required_status, message):
+def get_status(required_status):
 	count = 0
 	cbstats = os.popen(''.join([options.cbstat, ' ', options.server, ':11210 ', '-b ', options.bucket, ' all']))
 	for status in cbstats.readlines():
@@ -26,18 +26,24 @@ def get_status(required_status, message):
 			# parse status value
 			splitter = re.compile(r'\D')
 			status = int(splitter.split(status).pop(-2))
-			# convert to mb
-			status_mb = status/(1024.0**2)
-			if status >= options.critical:
-				print "CRITICAL - " + message, status_mb
-				return sys.exit(nagios_codes['CRITICAL'])
-			elif status >= options.warning:
-				print "WARNING - " + message, status_mb
-			else:
-				print "OK - " + message, status_mb
+			return status
+
+def check_levels(message, status_value):
+	# convert to mb
+	status_value_mb = status_value/(1024.0**2)
+	if status_value >= options.critical:
+		print "CRITICAL - " + message, status_value_mb
+		return sys.exit(nagios_codes['CRITICAL'])
+	elif status_value >= options.warning:
+		print "WARNING - " + message, status_value_mb
+		return sys.exit(nagios_codes['WARNING'])
+	else:
+		print "OK - " + message, status_value_mb
+		return sys.exit(nagios_codes['OK'])
 
 def check_disk_read_per_sec():
-	get_status(38, "CB disk read per sec: ")
+	disk_read = get_status(38)
+	check_levels("CB disk read per sec: ", disk_read)
 		
 def check_item_count():
 	count = 0
