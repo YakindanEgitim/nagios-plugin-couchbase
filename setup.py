@@ -1,10 +1,6 @@
 from distutils.core import setup
 import glob
-#from distribute_setup import use_setuptools
-#use_setuptools()
 
-#from setuptools import setup
- 
 setup(
 	name = "Couchbase Nagios Plugin",
 	version = "1.0",
