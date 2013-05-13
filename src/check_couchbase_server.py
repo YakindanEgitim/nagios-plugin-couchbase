@@ -178,25 +178,9 @@ def check_low_watermark():
 				return sys.exit(nagios_codes['OK'])
 
 def check_high_watermark():
-	count = 0
-	cbstats = os.popen(''.join([options.cbstat, ' ', options.server, ':11210 ', '-b ', options.bucket, ' all']))
-	for stat in cbstats.readlines():
-		count += 1
-		if count == 109:
-			# parse high watermark from string
-			splitter = re.compile(r'\D')
-			high_watermark = int(splitter.split(stat).pop(-2))
-			# convert to mb
-			high_watermark_mb = stat/(1024.0**2)
-			if high_watermark >= options.critical:
-				print "CouchBase high water mark  CRITICAL ", high_watermark_mb, " MB"
-				return sys.exit(nagios_codes['CRITICAL'])
-			elif high_watermark >= options.warning:
-				print "CouchBase high water mark  WARNING ", high_watermark_mb, " MB"
-				return sys.exit(nagios_codes['WARNING'])
-			else:
-				print "CouchBase high water mark  OK ", high_watermark_mb, " MB"
-				return sys.exit(nagios_codes['OK'])
+	ep_mem_high_wat = get_status(109)
+	check_levels("CB high watermark: ", ep_mem_high_wat)
+
 # which argument 
 def which_argument(result):
 	if options.operations_per_second:
