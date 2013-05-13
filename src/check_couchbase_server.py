@@ -157,25 +157,8 @@ def check_del_per_second():
 				return sys.exit(nagios_codes['OK'])
 
 def check_low_watermark():
-	count = 0
-	cbstats = os.popen(''.join([options.cbstat, ' ', options.server, ':11210 ', '-b ', options.bucket, ' all']))
-	for stat in cbstats.readlines():
-		count += 1
-		if count == 110:
-			# parse low warermark from string
-			splitter = re.compile(r'\D')
-			low_watermark = int(splitter.split(stat).pop(-2))
-			# convert to mb
-			low_watermark_mb = low_watermark/(1024.0**2)
-			if low_watermark >= options.critical:
-				print "CB low water mark  CRITICAL ", low_watermark_mb, " MB"
-				return sys.exit(nagios_codes['CRITICAL'])
-			elif low_watermark >= options.warning:
-				print "CB low water mark  WARNING ", low_watermark_mb, " MB"
-				return sys.exit(nagios_codes['WARNING'])
-			else:
-				print "CB low water mark  OK ", low_watermark_mb, " MB"
-				return sys.exit(nagios_codes['OK'])
+	ep_mem_low_wat = get_status(110)
+	check_levels("CB low watermark: ", ep_mem_low_wat)
 
 def check_high_watermark():
 	ep_mem_high_wat = get_status(109)
