@@ -101,20 +101,19 @@ def check_item_count():
 				print "CB item count OK ", item_count_mb, " MB"
 				sys.exit(nagios_codes['OK'])
 
-def check_ops_per_second(result):
-	# basic bucket stats  from json
-	basicStats = result['basicStats']
-	opsPerSec =  basicStats['opsPerSec']
-	if opsPerSec >= options.critical:
-		print "CB operation per second CRITICAL ", opsPerSec
-		return sys.exit(nagios_codes['CRITICAL'])
-	elif opsPerSec >= options.warning:
-		print "CB operation per second WARNING ", opsPerSec
-		return sys.exit(nagios_codes['WARNING'])
-	else:
-		print "CB operation per second OK ", opsPerSec
-		return sys.exit(nagios_codes['OK'])
-
+def check_ops_per_second():
+	cmd_get = get_status(13)
+	cmd_set = get_status(14)
+	incr_misses = get_status(186)
+	incr_hits = get_status(187)
+	decr_misses = get_status(24)
+	decr_hits = get_status(25)
+	delete_misses = get_status(26)
+	delete_hits = get_status(27)
+	ops_per_sec = cmd_get + cmd_set + incr_misses + incr_hits + decr_misses
+	ops_per_sec = decr_hits + delete_misses + delete_hits
+	check_levels("CB ops per sec: ", ops_per_sec)
+	
 def check_mem_used():
 	mem_used = get_status(193)
 	check_levels("CB memory used: ", mem_used)
@@ -201,7 +200,7 @@ def check_high_watermark():
 # which argument 
 def which_argument(result):
 	if options.operations_per_second:
-		check_ops_per_second(result)
+		check_ops_per_second()
 		arg = True
 	if options.cas:
 		check_cas_per_second()
