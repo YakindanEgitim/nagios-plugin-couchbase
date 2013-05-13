@@ -119,23 +119,8 @@ def check_mem_used():
 	check_levels("CB memory used: ", mem_used)
 
 def check_cas_per_second():
-	count = 0
-	cbstats = os.popen(''.join([options.cbstat, ' ', options.server, ':11210 ', '-b ', options.bucket, ' all']))
-	for stat in cbstats.readlines():
-		count += 1
-		if count == 10:
-			# parse cas
-			splitter = re.compile(r'\D')
-			cas = int(splitter.split(stat).pop(-2))
-			if cas >= options.critical:
-				print "CB CAS  CRITICAL ", cas
-				return sys.exit(nagios_codes['CRITICAL'])
-			elif cas >= options.warning:
-				print "CB CAS  WARNING ", cas
-				return sys.exit(nagios_codes['WARNING'])
-			else:
-				print "CouchBase CAS  OK ", cas
-				return sys.exit(nagios_codes['OK'])
+	cas_hits = get_status(10)
+	check_levels("CB cas per sec: ", cas_hits)
 		
 def check_del_per_second():
 	delete_hits = get_status(26)
