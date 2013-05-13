@@ -138,23 +138,8 @@ def check_cas_per_second():
 				return sys.exit(nagios_codes['OK'])
 		
 def check_del_per_second():
-	count = 0
-	cbstats = os.popen(''.join([options.cbstat, ' ', options.server, ':11210 ', '-b ', options.bucket, ' all']))
-	for stat in cbstats.readlines():
-		count += 1
-		if count == 120:
-			# parse delete per second 
-			splitter = re.compile(r'\D')
-			del_per_sec = int(splitter.split(stat).pop(-2))
-			if del_per_sec >= options.critical:
-				print "CB deletes per second  CRITICAL ", del_per_sec
-				return sys.exit(nagios_codes['CRITICAL'])
-			elif del_per_sec >= options.warning:
-				print "CB deletes per second  WARNING ", del_per_sec
-				return sys.exit(nagios_codes['WARNING'])
-			else:
-				print "CB deletes per second OK ", del_per_sec
-				return sys.exit(nagios_codes['OK'])
+	delete_hits = get_status(26)
+	check_levels("CB delete per sec: ", delete_hits)
 
 def check_low_watermark():
 	ep_mem_low_wat = get_status(110)
