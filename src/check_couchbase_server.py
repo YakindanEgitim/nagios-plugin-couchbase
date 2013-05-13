@@ -135,7 +135,7 @@ def check_high_watermark():
 	check_levels("CB high watermark: ", ep_mem_high_wat)
 
 # which argument 
-def which_argument(result):
+def which_argument():
 	if options.operations_per_second:
 		check_ops_per_second()
 		arg = True
@@ -175,9 +175,10 @@ def which_argument(result):
 	if options.disk_write_queue:
 		check_disk_write_queue()
 		arg = True 
-	if not arg:
-		result = json.dumps(result)
-		print result
+#	if not arg:
+#		pass
+#		result = json.dumps(result)
+		#print result
 
 
 # option parse
@@ -211,44 +212,7 @@ parser.add_option('--disk-write-queue', action='callback', callback=option_none,
 options, args = parser.parse_args()
 
 try:
-	url = ''.join(['http://', options.ip, ':', options.port, '/pools/', options.server, '/buckets/',  options.bucket])
-	r = requests.get(url, auth=(options.username, options.password))
-	if r.status_code == 200:
-		result = r.json()
-		which_argument(result)
-	elif r.status_code == 201:
-		print "201 Created\n Request to create a new resource is successful, but no HTTP response body returns. "
-		print "Request to create a new resource is successful, but no HTTP response body returns."
-	elif r.status_code == 202:
-		print "202 Accepted"
-		print "The request is accepted for processing, but processing is not complete."
-	elif r.status_code == 204:
-		print "204 No Content"
-		print "The server fulfilled the request, but does not need to return a response body."
-	elif r.status_code == 400:
-		print "400 Bad Request"
-		print "The request could not be processed because it contains missing or invalid information"
-	elif r.status_code == 401:
-		print "401 Unauthorized"
-		print "The credentials provided with this request are missing or invalid."
-	elif r.status_code == 403:
-		print "403 Forbidden"
-		print "The server recognized the given credentials, but you do not possess proper access to perform this request."
-	elif r.status_code == 404:
-		print "404 Not Found"
-		print "URI you provided in a request does not exist."
-	elif r.status_code == 405:
-		print "405 Method Not Allowed"
-	elif r.status_code == 406:
-		print "406 Not Acceptable"		
-	elif r.status_code == 409:
-		print "409 Conflict"
-	elif r.status_code == 500:
-		print "500 Internal Server Error"
-	elif r.status_code == 501:
-		print "501 Not Implemented"
-	elif r.status_code == 503:
-		print "503 Service Unavailable"
+	which_argument()
 except Exception:
     print "Invalid option combination"
     print "Try '--help' for more information "
