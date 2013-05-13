@@ -81,25 +81,8 @@ def check_disk_read_per_sec():
 	check_levels("CB disk read per sec: ", disk_read)
 		
 def check_item_count():
-	count = 0
-	cbstats = os.popen(''.join([options.cbstat, ' ', options.server, ':11210 ', '-b ', options.bucket, ' all']))
-	for stat in cbstats.readlines():
-		count += 1
-		if count == 20:
-			# parse item count from string
-			splitter = re.compile(r'\D')
-			item_count = int(splitter.split(stat).pop(-2))
-			# convert byte to mb
-			item_count_mb = item_count/(1024.0**2)
-			if item_count >= options.critical:
-				print "CB item count CRITICAL ", item_count_mb, " MB"
-				return sys.exit(nagios_codes['CRITICAL'])
-			elif item_count >= options.warning:
-				print "CB item count WARNING ", item_count_mb, " MB"
-				return sys.exit(nagios_codes['WARNING'])
-			else:
-				print "CB item count OK ", item_count_mb, " MB"
-				sys.exit(nagios_codes['OK'])
+	curr_items = get_status(20)
+	check_levels("CB item count: ", curr_items)
 
 def check_ops_per_second():
 	cmd_get = get_status(13)
@@ -175,11 +158,6 @@ def which_argument():
 	if options.disk_write_queue:
 		check_disk_write_queue()
 		arg = True 
-#	if not arg:
-#		pass
-#		result = json.dumps(result)
-		#print result
-
 
 # option parse
 parser = OptionParser()
