@@ -19,7 +19,7 @@ def option_none(option, opt, value, parser):
 # get specific status using cbstat
 def get_status(required_status):
 	count = 0
-	cbstats = os.popen(''.join([options.cbstat, ' ', options.server, ':11210 ', '-b ', options.bucket, ' all']))
+	cbstats = os.popen(''.join([options.cbstat, ' ', options.ip, ':11210 ', '-b ', options.bucket, ' all']))
 	for status in cbstats.readlines():
 		count += 1
 		if count == required_status:
@@ -166,7 +166,6 @@ arg = False
 
 #option define
 parser.add_option('-I', dest='ip')
-parser.add_option('-s', dest='server')
 parser.add_option('-u', dest='username')
 parser.add_option('-p', dest='password')
 parser.add_option('-P', dest='port')
