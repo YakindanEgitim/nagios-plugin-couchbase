@@ -115,22 +115,9 @@ def check_ops_per_second(result):
 		print "CB operation per second OK ", opsPerSec
 		return sys.exit(nagios_codes['OK'])
 
-def check_mem_usage(result):
-	basicStats = result['basicStats']
-	nodes = result['nodes']
-	nodes = dict(nodes[0])
-	mem_used = basicStats['memUsed']
-	# convert mb
-	mem_used_mb = basicStats['memUsed']/(1024.0**2)
-	if mem_used >= options.critical:
-		print "CB memory used CRITICAL ", mem_used_mb, " MB"
-		return sys.exit(nagios_codes['CRITICAL'])
-	elif mem_used >= options.warning:
-		print "CB memory used  WARNING ", mem_used_mb, " MB"
-		return sys.exit(nagios_codes['WARNING'])
-	else:
-		print "CB memory used  OK ", mem_used_mb, " MB"
-		return sys.exit(nagios_codes['OK'])
+def check_mem_used():
+	mem_used = get_status(193)
+	check_levels("CB memory used: ", mem_used)
 
 def check_cas_per_second():
 	count = 0
@@ -228,8 +215,8 @@ def which_argument(result):
 	if options.del_ps_check:
 		check_del_per_second()
 		arg = True
-	if options.memoryUsage:
-		check_mem_usage(result)
+	if options.mem_used:
+		check_mem_used()
 		arg = True
 	if options.disk_read:
 		check_disk_read_per_sec()
@@ -272,7 +259,7 @@ parser.add_option('-b', dest='bucket')
 parser.add_option('-W', type='int', dest='warning')
 parser.add_option('-C', type='int', dest='critical')
 parser.add_option('--OPS', action='callback', callback=option_none, dest='operations_per_second')
-parser.add_option('--mem', action='callback', callback=option_none, dest='memoryUsage')
+parser.add_option('--memory-used', action='callback', callback=option_none, dest='mem_used')
 parser.add_option('--disk-read', action='callback', callback=option_none, dest='disk_read')
 parser.add_option('--item-count', action='callback', callback=option_none, dest='item_count')
 parser.add_option('--CAS', action='callback', callback=option_none, dest='cas')
