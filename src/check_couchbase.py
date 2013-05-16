@@ -55,13 +55,21 @@ def check_levels(message, status_value):
 			print "OK - " + message, status_value_mb
 			return sys.exit(nagios_codes['OK'])
 
+def check_vb_active_ops_create():
+	vb_active_ops_create = get_status('vb_active_ops_create')
+	check_levels("CB active vbuckets ops_create: ", vb_active_ops_create)
+
+def check_vb_active_resident():
+	vb_active_perc_mem_resident = get_status('vb_active_perc_mem_resident')
+	check_levels("CB active vbuckets resident: ", vb_active_perc_mem_resident)
+
 def check_vb_active_items():
 	curr_items = get_status('curr_items')
-	check_levels("CB active vbuckets: ", curr_items)
+	check_levels("CB active vbuckets items: ", curr_items)
 
 def check_vb_active_vbcount():
 	vb_active_num = get_status('vb_active_num')
-	check_levels("CB active vbuckets: ", vb_active_num)
+	check_levels("CB active vbuckets count: ", vb_active_num)
 
 def check_get_per_second():
 	cmd_get = get_status('cmd_get')
@@ -197,6 +205,30 @@ def which_argument():
 		else:
 			print "wrong options combination"
 			sys.exit(2)
+	if options.vbucket_resident and options.vbucket:
+		if options.active:
+			check_vb_active_resident()
+		elif options.replica:
+			check_vb_replica_resident()
+		elif options.pending:
+			check_vb_pending_resident()
+		elif options.total:
+			check_vb_total_resident()
+		else:
+			print "wrong options combination"
+			sys.exit(2)
+	if options.vbucket_ops_create and options.vbucket:
+		if options.active:
+			check_vb_active_ops_create()
+		elif options.replica:
+			check_vb_replica_ops_create()
+		elif options.pending:
+			check_vb_pending_ops_create()
+		elif options.total:
+			check_vb_total_ops_create()
+		else:
+			print "wrong options combination"
+			sys.exit(2)
 	else:
 		print "wrong options combination"
 		sys.exit(2)
@@ -236,6 +268,8 @@ parser.add_option('--replica', action='callback', callback=option_none, dest='re
 parser.add_option('--pending', action='callback', callback=option_none, dest='pending')
 parser.add_option('--total', action='callback', callback=option_none, dest='total')
 parser.add_option('--items', action='callback', callback=option_none, dest='vbucket_items')
+parser.add_option('--resident', action='callback', callback=option_none, dest='vbucket_resident')
+parser.add_option('--ops-create', action='callback', callback=option_none, dest='vbucket_ops_create')
 options, args = parser.parse_args()
 
 try:
