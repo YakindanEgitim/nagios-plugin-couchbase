@@ -28,15 +28,26 @@ def get_status(required_status):
 def check_levels(message, status_value):
 	# convert to mb
 	status_value_mb = status_value/(1024.0**2)
-	if status_value >= options.critical:
-		print "CRITICAL - " + message, status_value_mb
-		return sys.exit(nagios_codes['CRITICAL'])
-	elif status_value >= options.warning:
-		print "WARNING - " + message, status_value_mb
-		return sys.exit(nagios_codes['WARNING'])
+	if options.critical > options.warning:
+		if status_value >= options.critical:
+			print "CRITICAL - " + message, status_value_mb
+			return sys.exit(nagios_codes['CRITICAL'])
+		elif status_value >= options.warning:
+			print "WARNING - " + message, status_value_mb
+			return sys.exit(nagios_codes['WARNING'])
+		else:
+			print "OK - " + message, status_value_mb
+			return sys.exit(nagios_codes['OK'])
 	else:
-		print "OK - " + message, status_value_mb
-		return sys.exit(nagios_codes['OK'])
+		if status_value >= options.warning:
+			print "WARNING - " + message, status_value_mb
+			return sys.exit(nagios_codes['WARNING'])
+		elif status_value >= options.critical:
+			print "CRITICAL - " + message, status_value_mb
+			return sys.exit(nagios_codes['CRITICAL'])
+		else:
+			print "OK - " + message, status_value_mb
+			return sys.exit(nagios_codes['OK'])
 
 def check_disk_write_queue():
 	ep_queue_size = get_status('ep_queue_size')
