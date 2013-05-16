@@ -55,13 +55,17 @@ def check_levels(message, status_value):
 			print "OK - " + message, status_value_mb
 			return sys.exit(nagios_codes['OK'])
 
+def check_get_per_second():
+	cmd_get = get_status('cmd_get')
+	check_levels("CB get per sec: ", cmd_get)
+
 def check_disk_write_queue():
 	ep_queue_size = get_status('ep_queue_size')
 	ep_flusher_todo = get_status('ep_flusher_todo')
 	disk_write_queue = ep_queue_size + ep_flusher_todo
 	check_levels("CB disk write queue: ", disk_write_queue)
 
-def check_set_per_sec():
+def check_set_per_second():
 	cmd_set = get_status('cmd_set')
 	check_levels("CB set per sec: ", cmd_set)
 
@@ -135,43 +139,32 @@ def check_high_watermark():
 def which_argument():
 	if options.operations_per_second:
 		check_ops_per_second()
-		arg = True
 	if options.cas:
 		check_cas_per_second()
-		arg = True
 	if options.high_watermark:
 		check_high_watermark()
-		arg = True
 	if options.low_watermark:
 		check_low_watermark()
-		arg = True
 	if options.del_ps_check:
 		check_del_per_second()
-		arg = True
 	if options.mem_used:
 		check_mem_used()
-		arg = True
 	if options.disk_read:
 		check_disk_read_per_sec()
-		arg = True
 	if options.item_count:
 		check_item_count()
-		arg = True
 	if options.cache_miss_ratio:
 		check_cache_miss_ratio()
-		arg = True
 	if options.create_per_sec:
 		check_create_per_sec()
-		arg = True
 	if options.update_per_sec:
 		check_update_per_sec()
-		arg = True
 	if options.set_per_sec:
-		check_set_per_sec()
-		arg = True
+		check_set_per_second()
 	if options.disk_write_queue:
 		check_disk_write_queue()
-		arg = True 
+	if options.get_per_sec:
+		check_get_per_second()
 
 # option parse
 parser = OptionParser()
@@ -199,6 +192,7 @@ parser.add_option('--cache-miss-ratio', action='callback', callback=option_none,
 parser.add_option('--create-per-sec', action='callback', callback=option_none, dest='create_per_sec')
 parser.add_option('--update-per-sec', action='callback', callback=option_none, dest='update_per_sec')
 parser.add_option('--set-per-sec', action='callback', callback=option_none, dest='set_per_sec')
+parser.add_option('--get-per-sec', action='callback', callback=option_none, dest='get_per_sec')
 parser.add_option('--disk-write-queue', action='callback', callback=option_none, dest='disk_write_queue')
 options, args = parser.parse_args()
 
