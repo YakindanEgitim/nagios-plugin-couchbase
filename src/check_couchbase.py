@@ -55,6 +55,10 @@ def check_levels(message, status_value):
 			print "OK - " + message, status_value_mb
 			return sys.exit(nagios_codes['OK'])
 
+def check_vb_active_vbcount():
+	vb_active_num = get_status('vb_active_num')
+	check_levels("CB active vbuckets: ", vb_active_num)
+
 def check_get_per_second():
 	cmd_get = get_status('cmd_get')
 	check_levels("CB get per sec: ", cmd_get)
@@ -165,6 +169,22 @@ def which_argument():
 		check_disk_write_queue()
 	if options.get_per_sec:
 		check_get_per_second()
+	if options.vbucket_count:
+		if options.vbucket:
+			if options.active:
+				check_vb_active_vbcount()
+			elif options.replica:
+				check_vb_replica_vbcount()
+			elif options.pending:
+				check_vb_pending_vbcount()
+			elif options.total:
+				check_vb_total_vbcount()
+			else:
+				print "wrong options combination"
+				sys.exit(2)
+		else:
+			print "wrong options combination"
+			sys.exit(2)
 
 # option parse
 parser = OptionParser()
@@ -194,6 +214,12 @@ parser.add_option('--update-per-sec', action='callback', callback=option_none, d
 parser.add_option('--set-per-sec', action='callback', callback=option_none, dest='set_per_sec')
 parser.add_option('--get-per-sec', action='callback', callback=option_none, dest='get_per_sec')
 parser.add_option('--disk-write-queue', action='callback', callback=option_none, dest='disk_write_queue')
+parser.add_option('--vbucket-count', action='callback', callback=option_none, dest='vbucket_count')
+parser.add_option('--vbucket', action='callback', callback=option_none, dest='vbucket')
+parser.add_option('--active', action='callback', callback=option_none, dest='active')
+parser.add_option('--replica', action='callback', callback=option_none, dest='replica')
+parser.add_option('--pending', action='callback', callback=option_none, dest='pending')
+parser.add_option('--total', action='callback', callback=option_none, dest='total')
 options, args = parser.parse_args()
 
 try:
