@@ -55,6 +55,18 @@ def check_levels(message, status_value):
 			print "OK - " + message, status_value_mb
 			return sys.exit(nagios_codes['OK'])
 
+def check_vb_active_eject_per_sec():
+	vb_active_eject = get_status('vb_active_eject')
+	check_levels("CB active vb ejections per sec: ", vb_active_eject)
+
+def check_vb_active_user_date():
+	vb_active_itm_memory = get_status('vb_active_itm_memory')
+	check_levels("CB active vb user data in ram: ", vb_active_itm_memory)
+
+def check_vb_active_metadata():
+	vb_active_meta_data_memory = get_status('vb_active_meta_data_memory')
+	check_levels("CB active vb metada in ram: ", vb_active_meta_data_memory)
+
 def check_vb_active_ops_create():
 	vb_active_ops_create = get_status('vb_active_ops_create')
 	check_levels("CB active vbuckets ops_create: ", vb_active_ops_create)
