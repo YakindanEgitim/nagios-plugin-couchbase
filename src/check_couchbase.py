@@ -55,6 +55,10 @@ def check_levels(message, status_value):
 			print "OK - " + message, status_value_mb
 			return sys.exit(nagios_codes['OK'])
 
+def check_vb_active_items():
+	curr_items = get_status('curr_items')
+	check_levels("CB active vbuckets: ", curr_items)
+
 def check_vb_active_vbcount():
 	vb_active_num = get_status('vb_active_num')
 	check_levels("CB active vbuckets: ", vb_active_num)
@@ -169,22 +173,33 @@ def which_argument():
 		check_disk_write_queue()
 	if options.get_per_sec:
 		check_get_per_second()
-	if options.vbucket_count:
-		if options.vbucket:
-			if options.active:
-				check_vb_active_vbcount()
-			elif options.replica:
-				check_vb_replica_vbcount()
-			elif options.pending:
-				check_vb_pending_vbcount()
-			elif options.total:
-				check_vb_total_vbcount()
-			else:
-				print "wrong options combination"
-				sys.exit(2)
+	if options.vbucket_count and options.vbucket:
+		if options.active:
+			check_vb_active_vbcount()
+		elif options.replica:
+			check_vb_replica_vbcount()
+		elif options.pending:
+			check_vb_pending_vbcount()
+		elif options.total:
+			check_vb_total_vbcount()
 		else:
 			print "wrong options combination"
 			sys.exit(2)
+	if options.vbucket_items and options.vbucket:
+		if options.active:
+			check_vb_active_items()
+		elif options.replica:
+			check_vb_replica_items()
+		elif options.pending:
+			check_vb_pending_items()
+		elif options.total:
+			check_vb_total_items()
+		else:
+			print "wrong options combination"
+			sys.exit(2)
+	else:
+		print "wrong options combination"
+		sys.exit(2)
 
 # option parse
 parser = OptionParser()
@@ -220,6 +235,7 @@ parser.add_option('--active', action='callback', callback=option_none, dest='act
 parser.add_option('--replica', action='callback', callback=option_none, dest='replica')
 parser.add_option('--pending', action='callback', callback=option_none, dest='pending')
 parser.add_option('--total', action='callback', callback=option_none, dest='total')
+parser.add_option('--items', action='callback', callback=option_none, dest='vbucket_items')
 options, args = parser.parse_args()
 
 try:
