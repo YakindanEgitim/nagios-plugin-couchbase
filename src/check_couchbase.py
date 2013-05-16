@@ -18,15 +18,12 @@ def option_none(option, opt, value, parser):
 	
 # get specific status using cbstat
 def get_status(required_status):
-	count = 0
-	cbstats = os.popen(''.join([options.cbstat, ' ', options.ip, ':11210 ', '-b ', options.bucket, ' all']))
-	for status in cbstats.readlines():
-		count += 1
-		if count == required_status:
-			# parse status value
-			splitter = re.compile(r'\D')
-			status = int(splitter.split(status).pop(-2))
-			return status
+	cbstat = os.popen(''.join([options.cbstat, ' ', options.ip, ':11210 ', '-b ', options.bucket, ' all', '|egrep ', required_status]))
+	status = cbstat.readline()
+	# parse value
+	splitter = re.compile(r'\D')
+	status = int(splitter.split(status).pop(-2))
+	return status
 
 def check_levels(message, status_value):
 	# convert to mb
@@ -42,8 +39,8 @@ def check_levels(message, status_value):
 		return sys.exit(nagios_codes['OK'])
 
 def check_disk_write_queue():
-	ep_queue_size = get_status(135)
-	ep_flusher_todo = get_status(76)
+	ep_queue_size = get_status('ep_queue_size')
+	ep_flusher_todo = get_status('ep_flusher_todo')
 	disk_write_queue = ep_queue_size + ep_flusher_todo
 	check_levels("CB disk write queue: ", disk_write_queue)
 
