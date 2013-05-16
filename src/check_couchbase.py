@@ -18,12 +18,18 @@ def option_none(option, opt, value, parser):
 	
 # get specific status using cbstat
 def get_status(required_status):
-	cbstat = os.popen(''.join([options.cbstat, ' ', options.ip, ':11210 ', '-b ', options.bucket, ' all', '|egrep ', required_status]))
-	status = cbstat.readline()
-	# parse value
-	splitter = re.compile(r'\D')
-	status = int(splitter.split(status).pop(-2))
-	return status
+	cbstats = os.popen(''.join([options.cbstat, ' ', options.ip, ':11210 ', '-b ', options.bucket, ' all', '|grep ', required_status]))
+	for status in cbstats.readlines():
+		# parse cbstat name
+		splitter = re.compile(r'\d')
+		status_name = splitter.split(status).pop(0)
+		status_name = status_name.strip()
+		status_name = status_name[:-1]
+		if status_name == required_status:
+			# parse cbstat value
+			splitter = re.compile(r'\D')
+			status_value = int(splitter.split(status).pop(-2))
+			return status_value
 
 def check_levels(message, status_value):
 	# convert to mb
@@ -56,28 +62,28 @@ def check_disk_write_queue():
 	check_levels("CB disk write queue: ", disk_write_queue)
 
 def check_set_per_sec():
-	cmd_set = get_status(14)
+	cmd_set = get_status('cmd_set')
 	check_levels("CB set per sec: ", cmd_set)
 
 def check_update_per_sec():
-	vb_active_ops_update = get_status(216)
-	vb_replica_ops_update = get_status(259)
-	vb_pending_ops_update = get_status(238)
+	vb_active_ops_update = get_status('vb_active_ops_update')
+	vb_replica_ops_update = get_status('vb_replica_ops_update')
+	vb_pending_ops_update = get_status('vb_pending_ops_update')
 	updates_per_sec = vb_active_ops_update + vb_replica_ops_update
 	updates_per_sec += vb_pending_ops_update
 	check_levels("CB disk updates per sec: ", updates_per_sec)
 
 def check_create_per_sec():
-	vb_active_ops_create = get_status(213)
-	vb_replica_ops_create = get_status(256)
-	vb_pending_ops_create = get_status(235)
+	vb_active_ops_create = get_status('vb_active_ops_create')
+	vb_replica_ops_create = get_status('vb_replica_ops_create')
+	vb_pending_ops_create = get_status('vb_pending_ops_create')
 	create_per_sec = vb_active_ops_create + vb_replica_ops_create 
 	create_per_sec += vb_pending_ops_create
 	check_levels("CB disk creates per sec: ", create_per_sec)
 
 def check_cache_miss_ratio():
-	ep_bg_fetched = get_status(38)
-	cmd_get = get_status(13)
+	ep_bg_fetched = get_status('ep_bg_fetched')
+	cmd_get = get_status('cmd_get')
 	if cmd_get == 0:
 		check_levels("CB cache miss ratio: ", 0)
 	else:
@@ -85,44 +91,44 @@ def check_cache_miss_ratio():
 		check_levels("CB cache miss ratio: ", cache_miss_ratio)
 
 def check_disk_read_per_sec():
-	disk_read = get_status(38)
+	disk_read = get_status('disk_read')
 	check_levels("CB disk read per sec: ", disk_read)
 		
 def check_item_count():
-	curr_items = get_status(20)
+	curr_items = get_status('curr_items')
 	check_levels("CB item count: ", curr_items)
 
 def check_ops_per_second():
-	cmd_get = get_status(13)
-	cmd_set = get_status(14)
-	incr_misses = get_status(186)
-	incr_hits = get_status(187)
-	decr_misses = get_status(24)
-	decr_hits = get_status(25)
-	delete_misses = get_status(26)
-	delete_hits = get_status(27)
+	cmd_get = get_status('cmd_get')
+	cmd_set = get_status('cmd_set')
+	incr_misses = get_status('incr_misses')
+	incr_hits = get_status('incr_hits')
+	decr_misses = get_status('decr_misses')
+	decr_hits = get_status('decr_hits')
+	delete_misses = get_status('delete_misses')
+	delete_hits = get_status('delete_hits')
 	ops_per_sec = cmd_get + cmd_set + incr_misses + incr_hits + decr_misses
 	ops_per_sec = decr_hits + delete_misses + delete_hits
 	check_levels("CB ops per sec: ", ops_per_sec)
 	
 def check_mem_used():
-	mem_used = get_status(193)
+	mem_used = get_status('mem_used')
 	check_levels("CB memory used: ", mem_used)
 
 def check_cas_per_second():
-	cas_hits = get_status(10)
+	cas_hits = get_status('cas_hits')
 	check_levels("CB cas per sec: ", cas_hits)
 		
 def check_del_per_second():
-	delete_hits = get_status(26)
+	delete_hits = get_status('delete_hits')
 	check_levels("CB delete per sec: ", delete_hits)
 
 def check_low_watermark():
-	ep_mem_low_wat = get_status(110)
+	ep_mem_low_wat = get_status('ep_mem_low_wat')
 	check_levels("CB low watermark: ", ep_mem_low_wat)
 
 def check_high_watermark():
-	ep_mem_high_wat = get_status(109)
+	ep_mem_high_wat = get_status('ep_mem_high_wat')
 	check_levels("CB high watermark: ", ep_mem_high_wat)
 
 # which argument 
