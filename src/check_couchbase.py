@@ -229,7 +229,7 @@ def which_argument():
 		else:
 			print "wrong options combination"
 			sys.exit(2)
-	if options.vbucket_ops_create and options.vbucket:
+	if options.vbucket_new_items and options.vbucket:
 		if options.active:
 			check_vb_active_ops_create()
 		elif options.replica:
@@ -281,7 +281,7 @@ parser.add_option('--pending', action='callback', callback=option_none, dest='pe
 parser.add_option('--total', action='callback', callback=option_none, dest='total')
 parser.add_option('--items', action='callback', callback=option_none, dest='vbucket_items')
 parser.add_option('--resident', action='callback', callback=option_none, dest='vbucket_resident')
-parser.add_option('--ops-create', action='callback', callback=option_none, dest='vbucket_ops_create')
+parser.add_option('--new-items', action='callback', callback=option_none, dest='vbucket_new_items')
 options, args = parser.parse_args()
 
 try:
