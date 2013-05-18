@@ -282,6 +282,9 @@ parser.add_option('--total', action='callback', callback=option_none, dest='tota
 parser.add_option('--items', action='callback', callback=option_none, dest='vbucket_items')
 parser.add_option('--resident', action='callback', callback=option_none, dest='vbucket_resident')
 parser.add_option('--new-items', action='callback', callback=option_none, dest='vbucket_new_items')
+parser.add_option('--ejections', action='callback', callback=option_none, dest='vbucket_ejections')
+parser.add_option('--user-data-ram', action='callback', callback=option_none, dest='vbucket_user_data_ram')
+parser.add_option('--meta-data-ram', action='callback', callback=option_none, dest='vbucket_meta_data_ram')
 options, args = parser.parse_args()
 
 try:
