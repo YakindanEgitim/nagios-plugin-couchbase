@@ -55,6 +55,34 @@ def check_levels(message, status_value):
 			print "OK - " + message, status_value_mb
 			return sys.exit(nagios_codes['OK'])
 
+def check_vb_replica_vbcount():
+	vb_replica_num = get_status('vb_replica_num')
+	check_levels("CB replica vbucket count: ", vb_replica_num)
+
+def check_vb_replica_items():
+	vb_replica_curr_items = get_status('vb_replica_curr_items')
+	check_levels("CB replica vb items count: ", vb_replica_curr_items)
+
+def check_vb_replica_resident():
+	vb_pending_perc_mem_resident = get_status('vb_pending_perc_mem_resident')
+	check_levels("CB replica vb residents: ", vb_pending_perc_mem_resident)
+
+def check_vb_replica_ops_create():
+	vb_replica_ops_create = get_status('vb_replica_ops_create')
+	check_levels("CB replica vb new items: ", vb_replica_ops_create)
+
+def check_vb_replica_ejections():
+	vb_replica_eject = get_status('vb_replica_eject')
+	check_levels("CB replica vb ejections: ", vb_replica_eject)
+
+def check_vb_replica_user_data_ram():
+	vb_replica_itm_memory = get_status('vb_replica_itm_memory')
+	check_levels("CB replica vb user data: ", vb_replica_itm_memory)
+
+def check_vb_replica_meta_data_ram():
+	vb_replica_meta_data_memory = get_status('vb_replica_meta_data_memory')
+	check_levels("CB replica vb meta data: ", vb_replica_meta_data_memory)
+
 def check_vb_active_ejections():
 	vb_active_eject = get_status('vb_active_eject')
 	check_levels("CB active vb ejections per sec: ", vb_active_eject)
