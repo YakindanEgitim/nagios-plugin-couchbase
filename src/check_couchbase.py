@@ -55,15 +55,15 @@ def check_levels(message, status_value):
 			print "OK - " + message, status_value_mb
 			return sys.exit(nagios_codes['OK'])
 
-def check_vb_active_eject_per_sec():
+def check_vb_active_ejections():
 	vb_active_eject = get_status('vb_active_eject')
 	check_levels("CB active vb ejections per sec: ", vb_active_eject)
 
-def check_vb_active_user_date():
+def check_vb_active_user_data_ram():
 	vb_active_itm_memory = get_status('vb_active_itm_memory')
 	check_levels("CB active vb user data in ram: ", vb_active_itm_memory)
 
-def check_vb_active_metadata():
+def check_vb_active_meta_data_ram():
 	vb_active_meta_data_memory = get_status('vb_active_meta_data_memory')
 	check_levels("CB active vb metada in ram: ", vb_active_meta_data_memory)
 
@@ -262,6 +262,18 @@ def which_argument():
 			check_vb_pending_user_data_ram()
 		elif options.total:
 			check_vb_total_user_data_ram()
+		else:
+			print "wrong options combination"
+			sys.exit(2)
+	if options.vbucket_meta_data_ram and options.vbucket:
+		if options.active:
+			check_vb_active_meta_data_ram()
+		elif options.replica:
+			check_vb_replica_meta_data_ram()
+		elif options.pending:
+			check_vb_pending_meta_data_ram()
+		elif options.total:
+			check_vb_total_meta_data_ram()
 		else:
 			print "wrong options combination"
 			sys.exit(2)
