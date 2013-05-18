@@ -241,6 +241,30 @@ def which_argument():
 		else:
 			print "wrong options combination"
 			sys.exit(2)
+	if options.vbucket_ejections and options.vbucket:
+		if options.active:
+			check_vb_active_ejections()
+		elif options.replica:
+			check_vb_replica_ejections()
+		elif options.pending:
+			check_vb_pending_ejections()
+		elif options.total:
+			check_vb_total_ejections()
+		else:
+			print "wrong options combination"
+			sys.exit(2)
+	if options.vbucket_user_data_ram and options.vbucket:
+		if options.active:
+			check_vb_active_user_data_ram()
+		elif options.replica:
+			check_vb_replica_user_data_ram()
+		elif options.pending:
+			check_vb_pending_user_data_ram()
+		elif options.total:
+			check_vb_total_user_data_ram()
+		else:
+			print "wrong options combination"
+			sys.exit(2)
 	else:
 		print "wrong options combination"
 		sys.exit(2)
