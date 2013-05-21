@@ -259,11 +259,12 @@ def which_argument():
 		check_disk_write_queue()
 	if options.get_per_sec:
 		check_get_per_second()
+
 	if options.vbucket_count and options.vbucket:
 		if options.active:
-			check_vb_active_vbcount()
+			check_vbucket('vb_active_num', 'CB active vBucket count', False)
 		elif options.replica:
-			check_vb_replica_vbcount()
+			check_vbucket('vb_replica_num', 'CB replica vBucket count', False)
 		elif options.pending:
 			check_vbucket('vb_pending_num', 'CB pending vBucket count', False)
 		elif options.total:
@@ -271,11 +272,12 @@ def which_argument():
 		else:
 			print "wrong options combination"
 			sys.exit(2)
+
 	if options.vbucket_items and options.vbucket:
 		if options.active:
-			check_vb_active_items()
+			check_vbucket('curr_items', 'CB active vBucket items', True)
 		elif options.replica:
-			check_vb_replica_items()
+			check_vbucket('vb_replica_curr_items', 'CB replica vBucket items', True)
 		elif options.pending:
 			check_vbucket('vb_pending_curr_items', 'CB pending vBucket items', True)
 		elif options.total:
@@ -283,43 +285,37 @@ def which_argument():
 		else:
 			print "wrong options combination"
 			sys.exit(2)
-	if options.vbucket_resident and options.vbucket:
-		if options.active:
-			check_vbucket()
-		elif options.pending:
-			check_vbucket()
-		else:
-			print "wrong options combination"
-			sys.exit(2)
+
 	if options.vbucket_new_items and options.vbucket:
 		if options.active:
-			check_vb_active_ops_create()
+			check_vbucket('vb_active_ops_create', 'CB active vBucket new items', True)
 		elif options.replica:
-			check_vb_replica_ops_create()
+			check_vbucket('vb_replica_ops_create', 'CB replica vBucket new items', True)
 		elif options.pending:
 			check_vbucket('vb_pending_ops_create', 'CB pending vBucket new items', True)
 		else:
 			print "wrong options combination"
 			sys.exit(2)
+
 	if options.vbucket_ejections and options.vbucket:
 		if options.active:
-			check_vb_active_ejections()
+			check_vbucket('vb_active_eject', 'CB active vBucket ejections', True)
 		elif options.replica:
-			check_vb_replica_ejections()
+			check_vbucket('vb_replica_eject', 'CB replica vBucket ejections', True)
 		elif options.pending:
 			check_vbucket('vb_pending_eject', 'CB pending vBucket ejections ', True)
 		elif options.total:
-			check_vbucket('ep_num_value_ejects', 'CB pending vBucket ejections', True)
+			check_vbucket('ep_num_value_ejects', 'CB total vBucket ejections', True)
 		else:
 			print "wrong options combination"
 			sys.exit(2)
 	if options.vbucket_user_data_ram and options.vbucket:
 		if options.active:
-			check_vb_active_user_data_ram()
+			check_vbucket('vb_active_itm_memory', 'CB active vBucket user data', True)
 		elif options.replica:
-			check_vb_replica_user_data_ram()
+			check_vbucket('vb_replica_itm_memory', 'CB replica vBucket user data', True)
 		elif options.pending:
-			check_vbucket('vb_pending_itm_memory', 'CB total vBucket user data', True)
+			check_vbucket('vb_pending_itm_memory', 'CB pending vBucket user data', True)
 		elif options.total:
 			check_vbucket('ep_kv_size', 'CB total vBucket user data', True)
 		else:
@@ -327,9 +323,9 @@ def which_argument():
 			sys.exit(2)
 	if options.vbucket_meta_data_ram and options.vbucket:
 		if options.active:
-			check_vb_active_meta_data_ram()
+			check_vbucket('vb_active_meta_data_memory', 'CB active vBucket meta data', True )
 		elif options.replica:
-			check_vb_replica_meta_data_ram()
+			check_vbucket('vb_replica_meta_data_memory', 'CB replica vBucket meta data', True)
 		elif options.pending:
 			check_vbucket('vb_pending_meta_data_memory', 'CB pending vBucket meta data', True)
 		else:
