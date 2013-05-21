@@ -51,29 +51,48 @@ def get_status(required_status):
 			status_value = int(splitter.split(status).pop(-2))
 			return status_value
 
-def check_levels(message, status_value):
-	# convert to mb
-	status_value_mb = status_value/(1024.0**2)
+def check_levels(message, status_value, divide):
+	size_type = ""
+	status = status_value
+	if divide:
+		# convert to gb
+		if status_value >= 1024**3:
+			status = status_value/(1024**3)
+			size_type = "GB"
+		# convert to mb
+		elif status_value >= 1024**2:
+			status = status_value/(1024**2)
+			size_type = "MB"
+		# convert to kb
+		elif status_value >= 1024:
+			status = status_value/1024
+			size_type = "KB"
+
 	if options.critical > options.warning:
+		print status
 		if status_value >= options.critical:
-			print "CRITICAL - " + message, status_value_mb
+			print "CRITICAL - " + message, status, size_type
 			return sys.exit(nagios_codes['CRITICAL'])
 		elif status_value >= options.warning:
-			print "WARNING - " + message, status_value_mb
+			print "WARNING - " + message, status, size_type
 			return sys.exit(nagios_codes['WARNING'])
 		else:
-			print "OK - " + message, status_value_mb
+			print "OK - " + message, status, size_type
 			return sys.exit(nagios_codes['OK'])
 	else:
 		if status_value >= options.warning:
-			print "WARNING - " + message, status_value_mb
+			print "WARNING - " + message, status, size_type
 			return sys.exit(nagios_codes['WARNING'])
 		elif status_value >= options.critical:
-			print "CRITICAL - " + message, status_value_mb
+			print "CRITICAL - " + message, status, size_type
 			return sys.exit(nagios_codes['CRITICAL'])
 		else:
-			print "OK - " + message, status_value_mb
+			print "OK - " + message, status, size_type
 			return sys.exit(nagios_codes['OK'])
+
+def check_vbucket(stat_name, message, divide):
+	stat_value = get_status(stat_name)
+	check_levels(message, stat_value, divide)
 
 def check_vb_replica_vbcount():
 	vb_replica_num = get_status('vb_replica_num')
@@ -247,7 +266,7 @@ def which_argument():
 		elif options.replica:
 			check_vb_replica_vbcount()
 		elif options.pending:
-			check_vb_pending_vbcount()
+			check_vbucket('vb_pending_num', 'CB pending vBucket count', False)
 		elif options.total:
 			check_vb_total_vbcount()
 		else:
@@ -259,7 +278,7 @@ def which_argument():
 		elif options.replica:
 			check_vb_replica_items()
 		elif options.pending:
-			check_vb_pending_items()
+			check_vbucket('vb_pending_curr_items', 'CB pending vBucket items', True)
 		elif options.total:
 			check_vb_total_items()
 		else:
@@ -271,7 +290,7 @@ def which_argument():
 		elif options.replica:
 			check_vb_replica_resident()
 		elif options.pending:
-			check_vb_pending_resident()
+			check_vbucket()
 		elif options.total:
 			check_vb_total_resident()
 		else:
@@ -283,7 +302,7 @@ def which_argument():
 		elif options.replica:
 			check_vb_replica_ops_create()
 		elif options.pending:
-			check_vb_pending_ops_create()
+			check_vbucket('vb_pending_ops_create', 'CB pending vBucket new items', True)
 		elif options.total:
 			check_vb_total_ops_create()
 		else:
@@ -295,7 +314,7 @@ def which_argument():
 		elif options.replica:
 			check_vb_replica_ejections()
 		elif options.pending:
-			check_vb_pending_ejections()
+			check_vbucket('vb_pending_eject', 'CB pending vBucket ejections ', True)
 		elif options.total:
 			check_vb_total_ejections()
 		else:
@@ -307,7 +326,7 @@ def which_argument():
 		elif options.replica:
 			check_vb_replica_user_data_ram()
 		elif options.pending:
-			check_vb_pending_user_data_ram()
+			check_vbucket('vb_pending_itm_memory', 'CB pending vBucket user data', True)
 		elif options.total:
 			check_vb_total_user_data_ram()
 		else:
@@ -319,7 +338,7 @@ def which_argument():
 		elif options.replica:
 			check_vb_replica_meta_data_ram()
 		elif options.pending:
-			check_vb_pending_meta_data_ram()
+			check_vbucket('vb_pending_meta_data_memory', 'CB pending vBucket meta data', True)
 		elif options.total:
 			check_vb_total_meta_data_ram()
 		else:
