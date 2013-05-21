@@ -286,11 +286,7 @@ def which_argument():
 	if options.vbucket_resident and options.vbucket:
 		if options.active:
 			check_vbucket()
-		elif options.replica:
-			check_vbucket()
 		elif options.pending:
-			check_vbucket()
-		elif options.total:
 			check_vbucket()
 		else:
 			print "wrong options combination"
@@ -302,8 +298,6 @@ def which_argument():
 			check_vb_replica_ops_create()
 		elif options.pending:
 			check_vbucket('vb_pending_ops_create', 'CB pending vBucket new items', True)
-		elif options.total:
-			check_vbucket()
 		else:
 			print "wrong options combination"
 			sys.exit(2)
@@ -338,8 +332,6 @@ def which_argument():
 			check_vb_replica_meta_data_ram()
 		elif options.pending:
 			check_vbucket('vb_pending_meta_data_memory', 'CB pending vBucket meta data', True)
-		elif options.total:
-			check_vb_total_meta_data_ram()
 		else:
 			print "wrong options combination"
 			sys.exit(2)
