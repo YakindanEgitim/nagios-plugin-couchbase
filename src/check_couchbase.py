@@ -57,19 +57,18 @@ def check_levels(message, status_value, divide):
 	if divide:
 		# convert to gb
 		if status_value >= 1024**3:
-			status = status_value/(1024**3)
+			status = status_value/(1024.0**3)
 			size_type = "GB"
 		# convert to mb
-		elif status_value >= 1024**2:
-			status = status_value/(1024**2)
+		elif status_value >= 1024.0**2:
+			status = status_value/(1024.0**2)
 			size_type = "MB"
 		# convert to kb
 		elif status_value >= 1024:
-			status = status_value/1024
+			status = status_value/1024.0
 			size_type = "KB"
 
 	if options.critical > options.warning:
-		print status
 		if status_value >= options.critical:
 			print "CRITICAL - " + message, status, size_type
 			return sys.exit(nagios_codes['CRITICAL'])
@@ -268,7 +267,7 @@ def which_argument():
 		elif options.pending:
 			check_vbucket('vb_pending_num', 'CB pending vBucket count', False)
 		elif options.total:
-			check_vb_total_vbcount()
+			check_vbucket('ep_vb_total', 'CB total vBucket count', False)
 		else:
 			print "wrong options combination"
 			sys.exit(2)
@@ -280,19 +279,19 @@ def which_argument():
 		elif options.pending:
 			check_vbucket('vb_pending_curr_items', 'CB pending vBucket items', True)
 		elif options.total:
-			check_vb_total_items()
+			check_vbucket('curr_items_tot', 'CB total vBucket items', True)
 		else:
 			print "wrong options combination"
 			sys.exit(2)
 	if options.vbucket_resident and options.vbucket:
 		if options.active:
-			check_vb_active_resident()
+			check_vbucket()
 		elif options.replica:
-			check_vb_replica_resident()
+			check_vbucket()
 		elif options.pending:
 			check_vbucket()
 		elif options.total:
-			check_vb_total_resident()
+			check_vbucket()
 		else:
 			print "wrong options combination"
 			sys.exit(2)
@@ -304,7 +303,7 @@ def which_argument():
 		elif options.pending:
 			check_vbucket('vb_pending_ops_create', 'CB pending vBucket new items', True)
 		elif options.total:
-			check_vb_total_ops_create()
+			check_vbucket()
 		else:
 			print "wrong options combination"
 			sys.exit(2)
@@ -316,7 +315,7 @@ def which_argument():
 		elif options.pending:
 			check_vbucket('vb_pending_eject', 'CB pending vBucket ejections ', True)
 		elif options.total:
-			check_vb_total_ejections()
+			check_vbucket('ep_num_value_ejects', 'CB pending vBucket ejections', True)
 		else:
 			print "wrong options combination"
 			sys.exit(2)
@@ -326,9 +325,9 @@ def which_argument():
 		elif options.replica:
 			check_vb_replica_user_data_ram()
 		elif options.pending:
-			check_vbucket('vb_pending_itm_memory', 'CB pending vBucket user data', True)
+			check_vbucket('vb_pending_itm_memory', 'CB total vBucket user data', True)
 		elif options.total:
-			check_vb_total_user_data_ram()
+			check_vbucket('ep_kv_size', 'CB total vBucket user data', True)
 		else:
 			print "wrong options combination"
 			sys.exit(2)
