@@ -93,52 +93,52 @@ def check_vbucket(stat_name, message, divide):
 	stat_value = get_status(stat_name)
 	check_levels(message, stat_value, divide)
 
-def check_get_per_second():
-	cmd_get = get_status('cmd_get')
-	check_levels("CB get per sec: ", cmd_get)
+def check_gets_per_sec():
+	status_value = get_status('cmd_get')
+	check_levels('CB gets per sec', status_value, True)
 
 def check_disk_write_queue():
 	ep_queue_size = get_status('ep_queue_size')
 	ep_flusher_todo = get_status('ep_flusher_todo')
-	disk_write_queue = ep_queue_size + ep_flusher_todo
-	check_levels("CB disk write queue: ", disk_write_queue)
+	status_value = ep_queue_size + ep_flusher_todo
+	check_levels('CB disk write queue', status_value, False)
 
-def check_set_per_second():
-	cmd_set = get_status('cmd_set')
-	check_levels("CB set per sec: ", cmd_set)
+def check_sets_per_sec():
+	status_value = get_status('cmd_set')
+	check_levels('CB sets per sec', status_value,  True)
 
-def check_update_per_sec():
+def check_disk_updates_per_sec():
 	vb_active_ops_update = get_status('vb_active_ops_update')
 	vb_replica_ops_update = get_status('vb_replica_ops_update')
 	vb_pending_ops_update = get_status('vb_pending_ops_update')
-	updates_per_sec = vb_active_ops_update + vb_replica_ops_update
-	updates_per_sec += vb_pending_ops_update
-	check_levels("CB disk updates per sec: ", updates_per_sec)
+	status_value = vb_active_ops_update + vb_replica_ops_update
+	status_value += vb_pending_ops_update
+	check_levels('CB disk updates per sec', status_value, True)
 
-def check_create_per_sec():
+def check_disk_creates_per_sec():
 	vb_active_ops_create = get_status('vb_active_ops_create')
 	vb_replica_ops_create = get_status('vb_replica_ops_create')
 	vb_pending_ops_create = get_status('vb_pending_ops_create')
-	create_per_sec = vb_active_ops_create + vb_replica_ops_create 
-	create_per_sec += vb_pending_ops_create
-	check_levels("CB disk creates per sec: ", create_per_sec)
+	status_value = vb_active_ops_create + vb_replica_ops_create 
+	status_value += vb_pending_ops_create
+	check_levels("CB disk creates per sec: ", status_value, True)
 
 def check_cache_miss_ratio():
 	ep_bg_fetched = get_status('ep_bg_fetched')
 	cmd_get = get_status('cmd_get')
 	if cmd_get == 0:
-		check_levels("CB cache miss ratio: ", 0)
+		check_levels('CB cache miss ratio', 0, False)
 	else:
-		cache_miss_ratio = ep_bg_fetched*1.0/cmd_get
-		check_levels("CB cache miss ratio: ", cache_miss_ratio)
+		status_value = ep_bg_fetched*1.0/cmd_get
+		check_levels('CB cache miss ratio', status_value, False)
 
-def check_disk_read_per_sec():
-	disk_read = get_status('disk_read')
-	check_levels("CB disk read per sec: ", disk_read)
+def check_disk_reads_per_sec():
+	status_value = get_status('ep_bg_fetched')
+	check_levels('CB disk read per sec', status_value, True)
 		
 def check_item_count():
-	curr_items = get_status('curr_items')
-	check_levels("CB item count: ", curr_items)
+	status_value = get_status('curr_items')
+	check_levels('CB item count', status_value, True)
 
 def check_ops_per_second():
 	cmd_get = get_status('cmd_get')
@@ -149,60 +149,63 @@ def check_ops_per_second():
 	decr_hits = get_status('decr_hits')
 	delete_misses = get_status('delete_misses')
 	delete_hits = get_status('delete_hits')
-	ops_per_sec = cmd_get + cmd_set + incr_misses + incr_hits + decr_misses
-	ops_per_sec = decr_hits + delete_misses + delete_hits
-	check_levels("CB ops per sec: ", ops_per_sec)
+	status_value = cmd_get + cmd_set + incr_misses + incr_hits + decr_misses
+	status_value = decr_hits + delete_misses + delete_hits
+	check_levels('CB ops per sec', status_value, True)
 	
-def check_mem_used():
-	mem_used = get_status('mem_used')
-	check_levels("CB memory used: ", mem_used)
+def check_memory_used():
+	status_value = get_status('mem_used')
+	check_levels('CB memory used', status_value, True)
 
-def check_cas_per_second():
-	cas_hits = get_status('cas_hits')
-	check_levels("CB cas per sec: ", cas_hits)
+def check_cas_per_sec():
+	status_value = get_status('cas_hits')
+	check_levels('CB cas per sec', status_value, True)
 		
-def check_del_per_second():
-	delete_hits = get_status('delete_hits')
-	check_levels("CB delete per sec: ", delete_hits)
+def check_deletes_per_sec():
+	status_value = get_status('delete_hits')
+	check_levels("CB delete per sec: ", status_value, True)
 
 def check_low_watermark():
-	ep_mem_low_wat = get_status('ep_mem_low_wat')
-	check_levels("CB low watermark: ", ep_mem_low_wat)
+	status_value = get_status('ep_mem_low_wat')
+	check_levels('CB low watermark', status_value, True)
 
 def check_high_watermark():
-	ep_mem_high_wat = get_status('ep_mem_high_wat')
-	check_levels("CB high watermark: ", ep_mem_high_wat)
+	status_value = get_status('ep_mem_high_wat')
+	check_levels('CB high watermark', status_value, True)
 
 # which argument 
 def which_argument():
 	if options.operations_per_second:
 		check_ops_per_second()
 	if options.cas:
-		check_cas_per_second()
+		check_cas_per_sec()
 	if options.high_watermark:
 		check_high_watermark()
 	if options.low_watermark:
 		check_low_watermark()
-	if options.del_ps_check:
-		check_del_per_second()
-	if options.mem_used:
-		check_mem_used()
-	if options.disk_read:
-		check_disk_read_per_sec()
+	if options.deletes_per_sec:
+		check_deletes_per_sec()
+	if options.memory_used:
+		check_memory_used()
+	if options.disk_reads_per_sec:
+		check_disk_reads_per_sec()
 	if options.item_count:
 		check_item_count()
 	if options.cache_miss_ratio:
 		check_cache_miss_ratio()
-	if options.create_per_sec:
-		check_create_per_sec()
-	if options.update_per_sec:
-		check_update_per_sec()
-	if options.set_per_sec:
-		check_set_per_second()
+	# wrong solution
+	if options.disk_creates_per_sec:
+		check_disk_creates_per_sec()
+	# wrong solution
+	if options.disk_updates_per_sec:
+		check_disk_updates_per_sec()
+	# wrong solution
+	if options.sets_per_sec:
+		check_sets_per_sec()
 	if options.disk_write_queue:
 		check_disk_write_queue()
-	if options.get_per_sec:
-		check_get_per_second()
+	if options.gets_per_sec:
+		check_gets_per_sec()
 
 	if options.vbucket_count and options.vbucket:
 		if options.active:
@@ -292,20 +295,20 @@ parser.add_option('-P', dest='port')
 parser.add_option('-b', dest='bucket')
 parser.add_option('-W', type='int', dest='warning')
 parser.add_option('-C', type='int', dest='critical')
-parser.add_option('--OPS', action='callback', callback=option_none, dest='operations_per_second')
-parser.add_option('--memory-used', action='callback', callback=option_none, dest='mem_used')
-parser.add_option('--disk-read', action='callback', callback=option_none, dest='disk_read')
+parser.add_option('--operations-per-sec', action='callback', callback=option_none, dest='operations_per_second')
+parser.add_option('--memory-used', action='callback', callback=option_none, dest='memory_used')
+parser.add_option('--disk-reads-per-sec', action='callback', callback=option_none, dest='disk_reads_per_sec')
 parser.add_option('--item-count', action='callback', callback=option_none, dest='item_count')
 parser.add_option('--CAS', action='callback', callback=option_none, dest='cas')
-parser.add_option('--del-per-second', action='callback', callback=option_none, dest='del_ps_check')
+parser.add_option('--deletes-per-sec', action='callback', callback=option_none, dest='deletes_per_sec')
 parser.add_option('--low-watermark', action='callback', callback=option_none, dest='low_watermark')
 parser.add_option('--high-watermark', action='callback', callback=option_none, dest='high_watermark')
 parser.add_option('--cbstat', default='/opt/couchbase/bin/cbstats', dest='cbstat')
 parser.add_option('--cache-miss-ratio', action='callback', callback=option_none, dest='cache_miss_ratio')
-parser.add_option('--create-per-sec', action='callback', callback=option_none, dest='create_per_sec')
-parser.add_option('--update-per-sec', action='callback', callback=option_none, dest='update_per_sec')
-parser.add_option('--set-per-sec', action='callback', callback=option_none, dest='set_per_sec')
-parser.add_option('--get-per-sec', action='callback', callback=option_none, dest='get_per_sec')
+parser.add_option('--disk-creates-per-sec', action='callback', callback=option_none, dest='disk_creates_per_sec')
+parser.add_option('--disk-updates-per-sec', action='callback', callback=option_none, dest='disk_updates_per_sec')
+parser.add_option('--sets-per-sec', action='callback', callback=option_none, dest='sets_per_sec')
+parser.add_option('--gets-per-sec', action='callback', callback=option_none, dest='gets_per_sec')
 parser.add_option('--disk-write-queue', action='callback', callback=option_none, dest='disk_write_queue')
 parser.add_option('--vbucket-count', action='callback', callback=option_none, dest='vbucket_count')
 parser.add_option('--vbucket', action='callback', callback=option_none, dest='vbucket')
