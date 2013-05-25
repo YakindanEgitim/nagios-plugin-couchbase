@@ -89,6 +89,10 @@ def check_levels(message, status_value, divide):
 			print "OK - " + message, status, size_type
 			return sys.exit(nagios_codes['OK'])
 
+def check_disk_queues(stat_name, message, divide):
+	stat_value = get_status(stat_name)
+	check_levels(message, stat_value, divide)
+
 def check_vbucket(stat_name, message, divide):
 	stat_value = get_status(stat_name)
 	check_levels(message, stat_value, divide)
@@ -278,9 +282,23 @@ def which_argument():
 		else:
 			print "wrong options combination"
 			sys.exit(2)
+
+	if options.disk_queues_items and options.disk_queues:
+		if options.active:
+			check_disk_queues('vb_active_queue_size', 'CB active disk Queues items', True)
+		elif options.replica:
+			check_disk_queues('vb_replica_queue_size', 'CB replica disk Queues items', True)
+		elif options.pending:
+			check_disk_queues('vb_pending_queue_size', 'CB pending disk Queues items', True)
+		elif options.total:
+			check_disk_queues('vb_total_queue_size', 'CB total  disk Queues items', True)
+		else:
+			print "wrong options combination"
+			return sys.exit(2)
+
 	else:
 		print "wrong options combination"
-		sys.exit(2)
+		return sys.exit(2)
 
 # option parse
 parser = OptionParser()
@@ -322,6 +340,8 @@ parser.add_option('--new-items', action='callback', callback=option_none, dest='
 parser.add_option('--ejections', action='callback', callback=option_none, dest='vbucket_ejections')
 parser.add_option('--user-data-ram', action='callback', callback=option_none, dest='vbucket_user_data_ram')
 parser.add_option('--meta-data-ram', action='callback', callback=option_none, dest='vbucket_meta_data_ram')
+parser.add_option('--disk-queues', action='callback', callback=option_none, dest='disk_queues')
+parser.add_option('--disk-items', action='callback', callback=option_none, dest='disk_queues_items')
 options, args = parser.parse_args()
 
 try:
