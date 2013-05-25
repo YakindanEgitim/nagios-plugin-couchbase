@@ -51,6 +51,7 @@ def get_status(required_status):
 			status_value = int(splitter.split(status).pop(-2))
 			return status_value
 
+# status level critical, warning, ok
 def check_levels(message, status_value, divide):
 	size_type = ""
 	status = status_value
@@ -97,20 +98,24 @@ def check_vbucket(stat_name, message, divide):
 	stat_value = get_status(stat_name)
 	check_levels(message, stat_value, divide)
 
+# number of gets operations per sec from specific bucket
 def check_gets_per_sec():
 	status_value = get_status('cmd_get')
 	check_levels('CB gets per sec', status_value, True)
 
+# size of the disk write queue from specific bucket
 def check_disk_write_queue():
 	ep_queue_size = get_status('ep_queue_size')
 	ep_flusher_todo = get_status('ep_flusher_todo')
 	status_value = ep_queue_size + ep_flusher_todo
 	check_levels('CB disk write queue', status_value, False)
 
+# number of set operations 
 def check_sets_per_sec():
 	status_value = get_status('cmd_set')
 	check_levels('CB sets per sec', status_value,  True)
 
+# number of existing items updated in specific bucket
 def check_disk_updates_per_sec():
 	vb_active_ops_update = get_status('vb_active_ops_update')
 	vb_replica_ops_update = get_status('vb_replica_ops_update')
@@ -119,6 +124,7 @@ def check_disk_updates_per_sec():
 	status_value += vb_pending_ops_update
 	check_levels('CB disk updates per sec', status_value, True)
 
+# number of new items created in specific bucket
 def check_disk_creates_per_sec():
 	vb_active_ops_create = get_status('vb_active_ops_create')
 	vb_replica_ops_create = get_status('vb_replica_ops_create')
@@ -127,6 +133,7 @@ def check_disk_creates_per_sec():
 	status_value += vb_pending_ops_create
 	check_levels("CB disk creates per sec: ", status_value, True)
 
+# percentage of reads per second to specific bucket which required a read from disk rather than RAM.
 def check_cache_miss_ratio():
 	ep_bg_fetched = get_status('ep_bg_fetched')
 	cmd_get = get_status('cmd_get')
@@ -136,14 +143,17 @@ def check_cache_miss_ratio():
 		status_value = ep_bg_fetched*1.0/cmd_get
 		check_levels('CB cache miss ratio', status_value, False)
 
+# number of reads per second from disk for specific bucket
 def check_disk_reads_per_sec():
 	status_value = get_status('ep_bg_fetched')
 	check_levels('CB disk read per sec', status_value, True)
-		
+
+# item count for specific bucket		
 def check_item_count():
 	status_value = get_status('curr_items')
 	check_levels('CB item count', status_value, True)
 
+# total operations per second
 def check_ops_per_second():
 	cmd_get = get_status('cmd_get')
 	cmd_set = get_status('cmd_set')
@@ -157,22 +167,27 @@ def check_ops_per_second():
 	status_value = decr_hits + delete_misses + delete_hits
 	check_levels('CB ops per sec', status_value, True)
 	
+# total amount of ram used by specific bucket
 def check_memory_used():
 	status_value = get_status('mem_used')
 	check_levels('CB memory used', status_value, True)
 
+# number of CAS operations per sec for data that specific bucket contains
 def check_cas_per_sec():
 	status_value = get_status('cas_hits')
 	check_levels('CB cas per sec', status_value, True)
 		
+# number of delete operations per second for specific bucket
 def check_deletes_per_sec():
 	status_value = get_status('delete_hits')
 	check_levels("CB delete per sec: ", status_value, True)
 
+# low water mark for memory usage
 def check_low_watermark():
 	status_value = get_status('ep_mem_low_wat')
 	check_levels('CB low watermark', status_value, True)
 
+# high water mark for memory usage
 def check_high_watermark():
 	status_value = get_status('ep_mem_high_wat')
 	check_levels('CB high watermark', status_value, True)
