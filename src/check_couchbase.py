@@ -301,7 +301,12 @@ def which_argument():
 		else:
 			print "wrong options combination"
 			sys.exit(2)
-
+	if options.disk_queues_drain_rate and options.disk_queues:
+		if options.pending:
+			check_disk_queues('vb_pending_queue_drain', 'CB pending disk Queues drain rate', True)
+		else:
+			print "wrong options combination"
+			sys.exit(2)
 	else:
 		print "wrong options combination"
 		return sys.exit(2)
@@ -349,6 +354,7 @@ parser.add_option('--meta-data-ram', action='callback', callback=option_none, de
 parser.add_option('--disk-queues', action='callback', callback=option_none, dest='disk_queues')
 parser.add_option('--disk-items', action='callback', callback=option_none, dest='disk_queues_items')
 parser.add_option('--fill-rate', action='callback', callback=option_none, dest='disk_queues_fill_rate')
+parser.add_option('--drain-rate', action='callback', callback=option_none, dest='disk_queues_drain_rate')
 options, args = parser.parse_args()
 
 try:
