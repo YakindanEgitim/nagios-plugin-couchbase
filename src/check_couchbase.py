@@ -191,8 +191,13 @@ def check_memory_used():
 	check_levels('CB memory used', status_value, True)
 
 # number of CAS operations per sec for data that specific bucket contains
-def check_cas_per_sec():
-	status_value = get_status('cas_hits')
+def check_cas_per_sec(result):
+	if result == None:
+		status_value = get_status('cas_hits')
+	else:
+		op = result['op']
+		samples = op['samples']
+		status_value = samples['cas_hits'].pop()
 	check_levels('CB cas per sec', status_value, True)
 		
 # number of delete operations per second for specific bucket
@@ -222,7 +227,7 @@ def which_argument(result):
 	if options.operations_per_second:
 		check_ops_per_second(result)
 	if options.cas:
-		check_cas_per_sec()
+		check_cas_per_sec(result)
 	if options.high_watermark:
 		check_high_watermark()
 	if options.low_watermark:
