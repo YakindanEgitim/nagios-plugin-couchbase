@@ -109,9 +109,15 @@ def check_gets_per_sec(result):
 	check_levels('CB gets per sec', status_value, True)
 
 # size of the disk write queue from specific bucket
-def check_disk_write_queue():
-	ep_queue_size = get_status('ep_queue_size')
-	ep_flusher_todo = get_status('ep_flusher_todo')
+def check_disk_write_queue(result):
+	if result == None:
+		ep_queue_size = get_status('ep_queue_size')
+		ep_flusher_todo = get_status('ep_flusher_todo')
+	else:
+		op = result['op']
+		samples = op['samples']
+		ep_queue_size = samples['ep_queue_size'].pop()
+		ep_flusher_todo = samples['ep_flusher_todo'].pop()
 	status_value = ep_queue_size + ep_flusher_todo
 	check_levels('CB disk write queue', status_value, False)
 
@@ -296,7 +302,7 @@ def which_argument(result):
 	if options.sets_per_sec:
 		check_sets_per_sec(result)
 	if options.disk_write_queue:
-		check_disk_write_queue()
+		check_disk_write_queue(result)
 	if options.gets_per_sec:
 		check_gets_per_sec(result)
 
