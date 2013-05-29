@@ -186,8 +186,13 @@ def check_ops_per_second(result):
 		
 	
 # total amount of ram used by specific bucket
-def check_memory_used():
-	status_value = get_status('mem_used')
+def check_memory_used(result):
+	if result == None:
+		status_value = get_status('mem_used')
+	else:
+		op = result['op']
+		samples = op['samples']
+		status_value = samples['mem_used'].pop()
 	check_levels('CB memory used', status_value, True)
 
 # number of CAS operations per sec for data that specific bucket contains
