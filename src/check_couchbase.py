@@ -166,8 +166,13 @@ def check_disk_reads_per_sec(result):
 	check_levels('CB disk read per sec', status_value, True)
 
 # item count for specific bucket		
-def check_item_count():
-	status_value = get_status('curr_items')
+def check_item_count(result):
+	if result == None:
+		status_value = get_status('curr_items')
+	else:
+		op = result['op']
+		samples = op['samples']
+		status_value = samples['curr_items'].pop()
 	check_levels('CB item count', status_value, True)
 
 # total operations per second
@@ -266,7 +271,7 @@ def which_argument(result):
 	if options.disk_reads_per_sec:
 		check_disk_reads_per_sec(result)
 	if options.item_count:
-		check_item_count()
+		check_item_count(result)
 	if options.cache_miss_ratio:
 		check_cache_miss_ratio()
 	# wrong solution
