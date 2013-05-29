@@ -121,10 +121,17 @@ def check_sets_per_sec():
 	check_levels('CB sets per sec', status_value,  True)
 
 # number of existing items updated in specific bucket
-def check_disk_updates_per_sec():
-	vb_active_ops_update = get_status('vb_active_ops_update')
-	vb_replica_ops_update = get_status('vb_replica_ops_update')
-	vb_pending_ops_update = get_status('vb_pending_ops_update')
+def check_disk_updates_per_sec(result):
+	if result == None:
+		vb_active_ops_update = get_status('vb_active_ops_update')
+		vb_replica_ops_update = get_status('vb_replica_ops_update')
+		vb_pending_ops_update = get_status('vb_pending_ops_update')
+	else:
+		op = result['op']
+		samples = op['samples']
+		vb_active_ops_update = samples['vb_active_ops_update'].pop()
+		vb_replica_ops_update = samples['vb_replica_ops_update'].pop()
+		vb_pending_ops_update = samples['vb_pending_ops_update'].pop()
 	status_value = vb_active_ops_update + vb_replica_ops_update
 	status_value += vb_pending_ops_update
 	check_levels('CB disk updates per sec', status_value, True)
@@ -279,7 +286,7 @@ def which_argument(result):
 		check_disk_creates_per_sec(result)
 	# wrong solution
 	if options.disk_updates_per_sec:
-		check_disk_updates_per_sec()
+		check_disk_updates_per_sec(result)
 	# wrong solution
 	if options.sets_per_sec:
 		check_sets_per_sec()
