@@ -206,8 +206,13 @@ def check_cas_per_sec(result):
 	check_levels('CB cas per sec', status_value, True)
 		
 # number of delete operations per second for specific bucket
-def check_deletes_per_sec():
-	status_value = get_status('delete_hits')
+def check_deletes_per_sec(result):
+	if result == None:
+		status_value = get_status('delete_hits')
+	else:
+		op = result['op']
+		samples = op['samples']
+		status_value  = samples['delete_hits'].pop()
 	check_levels("CB delete per sec: ", status_value, True)
 
 # low water mark for memory usage
@@ -238,9 +243,9 @@ def which_argument(result):
 	if options.low_watermark:
 		check_low_watermark(result)
 	if options.deletes_per_sec:
-		check_deletes_per_sec()
+		check_deletes_per_sec(result)
 	if options.memory_used:
-		check_memory_used()
+		check_memory_used(result)
 	if options.disk_reads_per_sec:
 		check_disk_reads_per_sec(result)
 	if options.item_count:
