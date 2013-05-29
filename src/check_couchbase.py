@@ -440,13 +440,12 @@ parser.add_option('--disk-items', action='callback', callback=option_none, dest=
 parser.add_option('--fill-rate', action='callback', callback=option_none, dest='disk_queues_fill_rate')
 parser.add_option('--drain-rate', action='callback', callback=option_none, dest='disk_queues_drain_rate')
 parser.add_option('--node', action='callback', callback=option_none, dest='node')
-parser.add_option('--cluster', action='callback', callback=option_none, dest='cluster')
 options, args = parser.parse_args()
 
 try:
 	if options.node:
 		which_argument(None)
-	elif options.cluster:
+	else:
 		url = ''.join(['http://', options.ip, ':', options.port, '/pools/default/buckets/', options.bucket, '/stats/'])
 		r = requests.get(url, auth=(options.username, options.password))
 		result = r.json()
