@@ -125,10 +125,17 @@ def check_disk_updates_per_sec():
 	check_levels('CB disk updates per sec', status_value, True)
 
 # number of new items created in specific bucket
-def check_disk_creates_per_sec():
-	vb_active_ops_create = get_status('vb_active_ops_create')
-	vb_replica_ops_create = get_status('vb_replica_ops_create')
-	vb_pending_ops_create = get_status('vb_pending_ops_create')
+def check_disk_creates_per_sec(result):
+	if result == None:
+		vb_active_ops_create = get_status('vb_active_ops_create')
+		vb_replica_ops_create = get_status('vb_replica_ops_create')
+		vb_pending_ops_create = get_status('vb_pending_ops_create')
+	else:
+		op = result['op']
+		samples = op['samples']
+		vb_active_ops_create = samples['vb_active_ops_create'].pop()
+		vb_replica_ops_create = samples['vb_replica_ops_create'].pop()
+		vb_pending_ops_create = samples['vb_pending_ops_create'].pop()
 	status_value = vb_active_ops_create + vb_replica_ops_create 
 	status_value += vb_pending_ops_create
 	check_levels("CB disk creates per sec: ", status_value, True)
@@ -259,7 +266,7 @@ def which_argument(result):
 		check_cache_miss_ratio()
 	# wrong solution
 	if options.disk_creates_per_sec:
-		check_disk_creates_per_sec()
+		check_disk_creates_per_sec(result)
 	# wrong solution
 	if options.disk_updates_per_sec:
 		check_disk_updates_per_sec()
