@@ -116,8 +116,13 @@ def check_disk_write_queue():
 	check_levels('CB disk write queue', status_value, False)
 
 # number of set operations 
-def check_sets_per_sec():
-	status_value = get_status('cmd_set')
+def check_sets_per_sec(result):
+	if result == None:
+		status_value = get_status('cmd_set')
+	else:
+		op = result['op']
+		samples = op['samples']
+		status_value = samples['cmd_set'].pop()
 	check_levels('CB sets per sec', status_value,  True)
 
 # number of existing items updated in specific bucket
@@ -289,7 +294,7 @@ def which_argument(result):
 		check_disk_updates_per_sec(result)
 	# wrong solution
 	if options.sets_per_sec:
-		check_sets_per_sec()
+		check_sets_per_sec(result)
 	if options.disk_write_queue:
 		check_disk_write_queue()
 	if options.gets_per_sec:
