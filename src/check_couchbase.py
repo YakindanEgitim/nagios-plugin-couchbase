@@ -57,16 +57,16 @@ def check_levels(message, status_value, divide):
 	status = status_value
 	if divide:
 		# convert to gb
-		if status_value >= 1024**3:
-			status = status_value/(1024.0**3)
+		if status_value >= 1000**3:
+			status = status_value/(1000.0**3)
 			size_type = "GB"
 		# convert to mb
-		elif status_value >= 1024.0**2:
-			status = status_value/(1024.0**2)
+		elif status_value >= 1000.0**2:
+			status = status_value/(1000.0**2)
 			size_type = "MB"
 		# convert to kb
-		elif status_value >= 1024:
-			status = status_value/1024.0
+		elif status_value >= 1000:
+			status = status_value/1000.0
 			size_type = "KB"
 
 	if options.critical > options.warning:
@@ -183,9 +183,16 @@ def check_deletes_per_sec():
 	check_levels("CB delete per sec: ", status_value, True)
 
 # low water mark for memory usage
-def check_low_watermark():
-	status_value = get_status('ep_mem_low_wat')
-	check_levels('CB low watermark', status_value, True)
+def check_low_watermark(result):
+	if result == None:
+		status_value = get_status('ep_mem_low_wat')
+		check_levels('CB low watermark', status_value, True)
+	else:
+		op = result['op']
+		samples = op['samples']
+		ep_mem_low_wat = samples['ep_mem_low_wat']
+		status_value = ep_mem_low_wat.pop()
+		check_levels('CB low watermark', status_value, True)
 
 # high water mark for memory usage
 def check_high_watermark():
@@ -193,7 +200,7 @@ def check_high_watermark():
 	check_levels('CB high watermark', status_value, True)
 
 # which argument 
-def which_argument():
+def which_argument(result):	
 	if options.operations_per_second:
 		check_ops_per_second()
 	if options.cas:
@@ -201,7 +208,7 @@ def which_argument():
 	if options.high_watermark:
 		check_high_watermark()
 	if options.low_watermark:
-		check_low_watermark()
+		check_low_watermark(result)
 	if options.deletes_per_sec:
 		check_deletes_per_sec()
 	if options.memory_used:
@@ -370,10 +377,19 @@ parser.add_option('--disk-queues', action='callback', callback=option_none, dest
 parser.add_option('--disk-items', action='callback', callback=option_none, dest='disk_queues_items')
 parser.add_option('--fill-rate', action='callback', callback=option_none, dest='disk_queues_fill_rate')
 parser.add_option('--drain-rate', action='callback', callback=option_none, dest='disk_queues_drain_rate')
+parser.add_option('--node', action='callback', callback=option_none, dest='node')
+parser.add_option('--cluster', action='callback', callback=option_none, dest='cluster')
 options, args = parser.parse_args()
 
 try:
-	which_argument()
+	if options.node:
+		which_argument(None)
+	elif options.cluster:
+		url = ''.join(['http://', options.ip, ':', options.port, '/pools/default/buckets/', options.bucket, '/stats/'])
+		r = requests.get(url, auth=(options.username, options.password))
+		result = r.json()
+		which_argument(result)
+		
 except Exception:
     print "Invalid option combination"
     print "Try '--help' for more information "
