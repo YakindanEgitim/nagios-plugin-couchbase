@@ -228,8 +228,13 @@ def check_low_watermark(result):
 		check_levels('CB low watermark', status_value, True)
 
 # high water mark for memory usage
-def check_high_watermark():
-	status_value = get_status('ep_mem_high_wat')
+def check_high_watermark(result):
+	if result == None:
+		status_value = get_status('ep_mem_high_wat')
+	else:
+		op = result['op']
+		samples = op['samples']
+		status_value = samples['ep_mem_high_wat'].pop()
 	check_levels('CB high watermark', status_value, True)
 
 # which argument 
@@ -239,7 +244,7 @@ def which_argument(result):
 	if options.cas:
 		check_cas_per_sec(result)
 	if options.high_watermark:
-		check_high_watermark()
+		check_high_watermark(result)
 	if options.low_watermark:
 		check_low_watermark(result)
 	if options.deletes_per_sec:
