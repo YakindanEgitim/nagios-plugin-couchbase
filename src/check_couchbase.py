@@ -154,18 +154,31 @@ def check_item_count():
 	check_levels('CB item count', status_value, True)
 
 # total operations per second
-def check_ops_per_second():
-	cmd_get = get_status('cmd_get')
-	cmd_set = get_status('cmd_set')
-	incr_misses = get_status('incr_misses')
-	incr_hits = get_status('incr_hits')
-	decr_misses = get_status('decr_misses')
-	decr_hits = get_status('decr_hits')
-	delete_misses = get_status('delete_misses')
-	delete_hits = get_status('delete_hits')
+def check_ops_per_second(result):
+	if result == None:
+		cmd_get = get_status('cmd_get')
+		cmd_set = get_status('cmd_set')
+		incr_misses = get_status('incr_misses')
+		incr_hits = get_status('incr_hits')
+		decr_misses = get_status('decr_misses')
+		decr_hits = get_status('decr_hits')
+		delete_misses = get_status('delete_misses')
+		delete_hits = get_status('delete_hits')
+	else:
+		op = result['op']
+		samples = op['samples']
+		cmd_get = samples['cmd_get'].pop()
+		cmd_set = samples['cmd_set'].pop()
+		incr_misses = samples['incr_misses'].pop()
+		incr_hits = samples['incr_hits'].pop()
+		decr_misses = samples['decr_misses'].pop()
+		decr_hits = samples['decr_hits'].pop()
+		delete_misses = samples['delete_misses'].pop()
+		delete_hits = samples['delete_hits'].pop()
 	status_value = cmd_get + cmd_set + incr_misses + incr_hits + decr_misses
 	status_value = decr_hits + delete_misses + delete_hits
 	check_levels('CB ops per sec', status_value, True)
+		
 	
 # total amount of ram used by specific bucket
 def check_memory_used():
@@ -202,7 +215,7 @@ def check_high_watermark():
 # which argument 
 def which_argument(result):	
 	if options.operations_per_second:
-		check_ops_per_second()
+		check_ops_per_second(result)
 	if options.cas:
 		check_cas_per_sec()
 	if options.high_watermark:
