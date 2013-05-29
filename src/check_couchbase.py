@@ -144,8 +144,13 @@ def check_cache_miss_ratio():
 		check_levels('CB cache miss ratio', status_value, False)
 
 # number of reads per second from disk for specific bucket
-def check_disk_reads_per_sec():
-	status_value = get_status('ep_bg_fetched')
+def check_disk_reads_per_sec(result):
+	if result == None:
+		status_value = get_status('ep_bg_fetched')	
+	else:
+		op = result['op']
+		samples = op['samples']
+		status_value = samples['ep_bg_fetched'].pop()
 	check_levels('CB disk read per sec', status_value, True)
 
 # item count for specific bucket		
@@ -227,7 +232,7 @@ def which_argument(result):
 	if options.memory_used:
 		check_memory_used()
 	if options.disk_reads_per_sec:
-		check_disk_reads_per_sec()
+		check_disk_reads_per_sec(result)
 	if options.item_count:
 		check_item_count()
 	if options.cache_miss_ratio:
