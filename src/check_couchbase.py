@@ -99,8 +99,13 @@ def check_vbucket(stat_name, message, divide):
 	check_levels(message, stat_value, divide)
 
 # number of gets operations per sec from specific bucket
-def check_gets_per_sec():
-	status_value = get_status('cmd_get')
+def check_gets_per_sec(result):
+	if result == None:
+		status_value = get_status('cmd_get')
+	else:
+		op = result['op']
+		samples = op['samples']
+		status_value = samples['cmd_get'].pop()
 	check_levels('CB gets per sec', status_value, True)
 
 # size of the disk write queue from specific bucket
@@ -276,7 +281,7 @@ def which_argument(result):
 	if options.disk_write_queue:
 		check_disk_write_queue()
 	if options.gets_per_sec:
-		check_gets_per_sec()
+		check_gets_per_sec(result)
 
 	if options.vbucket_count and options.vbucket:
 		if options.active:
