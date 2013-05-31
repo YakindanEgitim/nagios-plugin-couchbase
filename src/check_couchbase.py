@@ -23,9 +23,7 @@ from optparse import OptionParser
 import requests
 import json
 import sys
-#from subprocess import Popen, PIPE
 import subprocess
-#import os
 import re
 
 nagios_codes = {'OK': 0, 'WARNING': 1, 'CRITICAL': 2, 'UNKNOWN':3, 'DEPENDENT':4,}
@@ -40,7 +38,6 @@ def option_none(option, opt, value, parser):
 	
 # get specific status using cbstat
 def get_status(required_status):
-	print "i**"
 	cbstats_cmd = ''.join([options.cbstat, ' ', options.ip, ':11210 ', '-b ', options.bucket, ' all', '|grep ', required_status])
 	cmd = subprocess.Popen(cbstats_cmd, shell=True, stdout=subprocess.PIPE)
 	return_code = cmd.wait()
