@@ -23,7 +23,9 @@ from optparse import OptionParser
 import requests
 import json
 import sys
-import os
+#from subprocess import Popen, PIPE
+import subprocess
+#import os
 import re
 
 nagios_codes = {'OK': 0, 'WARNING': 1, 'CRITICAL': 2, 'UNKNOWN':3, 'DEPENDENT':4,}
@@ -38,8 +40,17 @@ def option_none(option, opt, value, parser):
 	
 # get specific status using cbstat
 def get_status(required_status):
-	cbstats = os.popen(''.join([options.cbstat, ' ', options.ip, ':11210 ', '-b ', options.bucket, ' all', '|grep ', required_status]))
-	for status in cbstats.readlines():
+	print "i**"
+	cbstats_cmd = ''.join([options.cbstat, ' ', options.ip, ':11210 ', '-b ', options.bucket, ' all', '|grep ', required_status])
+	cmd = subprocess.Popen(cbstats_cmd, shell=True, stdout=subprocess.PIPE)
+	return_code = cmd.wait()
+	stdout = cmd.communicate()[0]
+	if return_code != 0:
+		print "WARNING - You have entered wrong value for parameters"
+		return sys.exit(1)
+	stdout_list = stdout.split('\n')
+	stdout_list.pop()
+	for status in stdout_list:
 		# parse cbstat name
 		splitter = re.compile(r'\d')
 		status_name = splitter.split(status).pop(0)
@@ -48,7 +59,7 @@ def get_status(required_status):
 		if status_name == required_status:
 			# parse cbstat value
 			splitter = re.compile(r'\D')
-			status_value = int(splitter.split(status).pop(-2))
+			status_value = int(splitter.split(status).pop(-1))
 			return status_value
 
 # status level critical, warning, ok
@@ -94,8 +105,13 @@ def check_disk_queues(stat_name, message, divide):
 	stat_value = get_status(stat_name)
 	check_levels(message, stat_value, divide)
 
-def check_vbucket(stat_name, message, divide):
-	stat_value = get_status(stat_name)
+def check_vbucket(stat_name, message, divide, result):
+	if result == None:
+		stat_value = get_status(stat_name)
+	else:
+		op = result['op']
+		samples = op['samples']
+		stat_value = samples[stat_name].pop()
 	check_levels(message, stat_value, divide)
 
 # number of gets operations per sec from specific bucket
@@ -305,100 +321,100 @@ def which_argument(result):
 		check_disk_write_queue(result)
 	if options.gets_per_sec:
 		check_gets_per_sec(result)
-
+	
 	if options.vbucket_count and options.vbucket:
 		if options.active:
-			check_vbucket('vb_active_num', 'CB active vBucket count', False)
+			check_vbucket('vb_active_num', 'CB active vBucket count', False, result)
 		elif options.replica:
-			check_vbucket('vb_replica_num', 'CB replica vBucket count', False)
+			check_vbucket('vb_replica_num', 'CB replica vBucket count', False, result)
 		elif options.pending:
-			check_vbucket('vb_pending_num', 'CB pending vBucket count', False)
+			check_vbucket('vb_pending_num', 'CB pending vBucket count', False, result)
 		elif options.total:
-			check_vbucket('ep_vb_total', 'CB total vBucket count', False)
+			check_vbucket('ep_vb_total', 'CB total vBucket count', False, result)
 		else:
 			print "wrong options combination"
 			sys.exit(2)
 
 	if options.vbucket_items and options.vbucket:
 		if options.active:
-			check_vbucket('curr_items', 'CB active vBucket items', True)
+			check_vbucket('curr_items', 'CB active vBucket items', True, result)
 		elif options.replica:
-			check_vbucket('vb_replica_curr_items', 'CB replica vBucket items', True)
+			check_vbucket('vb_replica_curr_items', 'CB replica vBucket items', True, result)
 		elif options.pending:
-			check_vbucket('vb_pending_curr_items', 'CB pending vBucket items', True)
+			check_vbucket('vb_pending_curr_items', 'CB pending vBucket items', True, result)
 		elif options.total:
-			check_vbucket('curr_items_tot', 'CB total vBucket items', True)
+			check_vbucket('curr_items_tot', 'CB total vBucket items', True, result)
 		else:
 			print "wrong options combination"
 			sys.exit(2)
 
 	if options.vbucket_new_items and options.vbucket:
 		if options.active:
-			check_vbucket('vb_active_ops_create', 'CB active vBucket new items', True)
+			check_vbucket('vb_active_ops_create', 'CB active vBucket new items', True, result)
 		elif options.replica:
-			check_vbucket('vb_replica_ops_create', 'CB replica vBucket new items', True)
+			check_vbucket('vb_replica_ops_create', 'CB replica vBucket new items', True, result)
 		elif options.pending:
-			check_vbucket('vb_pending_ops_create', 'CB pending vBucket new items', True)
+			check_vbucket('vb_pending_ops_create', 'CB pending vBucket new items', True, result)
 		else:
 			print "wrong options combination"
 			sys.exit(2)
 
 	if options.vbucket_ejections and options.vbucket:
 		if options.active:
-			check_vbucket('vb_active_eject', 'CB active vBucket ejections', True)
+			check_vbucket('vb_active_eject', 'CB active vBucket ejections', True, result)
 		elif options.replica:
-			check_vbucket('vb_replica_eject', 'CB replica vBucket ejections', True)
+			check_vbucket('vb_replica_eject', 'CB replica vBucket ejections', True, result)
 		elif options.pending:
-			check_vbucket('vb_pending_eject', 'CB pending vBucket ejections ', True)
+			check_vbucket('vb_pending_eject', 'CB pending vBucket ejections ', True, result)
 		elif options.total:
-			check_vbucket('ep_num_value_ejects', 'CB total vBucket ejections', True)
+			check_vbucket('ep_num_value_ejects', 'CB total vBucket ejections', True, result)
 		else:
 			print "wrong options combination"
 			sys.exit(2)
 	if options.vbucket_user_data_ram and options.vbucket:
 		if options.active:
-			check_vbucket('vb_active_itm_memory', 'CB active vBucket user data', True)
+			check_vbucket('vb_active_itm_memory', 'CB active vBucket user data', True, result)
 		elif options.replica:
-			check_vbucket('vb_replica_itm_memory', 'CB replica vBucket user data', True)
+			check_vbucket('vb_replica_itm_memory', 'CB replica vBucket user data', True, result)
 		elif options.pending:
-			check_vbucket('vb_pending_itm_memory', 'CB pending vBucket user data', True)
+			check_vbucket('vb_pending_itm_memory', 'CB pending vBucket user data', True, result)
 		elif options.total:
-			check_vbucket('ep_kv_size', 'CB total vBucket user data', True)
+			check_vbucket('ep_kv_size', 'CB total vBucket user data', True, result)
 		else:
 			print "wrong options combination"
 			sys.exit(2)
 	if options.vbucket_meta_data_ram and options.vbucket:
 		if options.active:
-			check_vbucket('vb_active_meta_data_memory', 'CB active vBucket meta data', True )
+			check_vbucket('vb_active_meta_data_memory', 'CB active vBucket meta data', True, result)
 		elif options.replica:
-			check_vbucket('vb_replica_meta_data_memory', 'CB replica vBucket meta data', True)
+			check_vbucket('vb_replica_meta_data_memory', 'CB replica vBucket meta data', True, result)
 		elif options.pending:
-			check_vbucket('vb_pending_meta_data_memory', 'CB pending vBucket meta data', True)
+			check_vbucket('vb_pending_meta_data_memory', 'CB pending vBucket meta data', True, result)
 		else:
 			print "wrong options combination"
 			sys.exit(2)
 
 	if options.disk_queues_items and options.disk_queues:
 		if options.active:
-			check_disk_queues('vb_active_queue_size', 'CB active disk Queues items', True)
+			check_disk_queues('vb_active_queue_size', 'CB active disk Queues items', True, result)
 		elif options.replica:
-			check_disk_queues('vb_replica_queue_size', 'CB replica disk Queues items', True)
+			check_disk_queues('vb_replica_queue_size', 'CB replica disk Queues items', True, result)
 		elif options.pending:
-			check_disk_queues('vb_pending_queue_size', 'CB pending disk Queues items', True)
+			check_disk_queues('vb_pending_queue_size', 'CB pending disk Queues items', True, result)
 		elif options.total:
-			check_disk_queues('vb_total_queue_size', 'CB total  disk Queues items', True)
+			check_disk_queues('vb_total_queue_size', 'CB total  disk Queues items', True, result)
 		else:
 			print "wrong options combination"
 			return sys.exit(2)
 	if options.disk_queues_fill_rate and options.disk_queues:
 		if options.pending:
-			check_disk_queues('vb_pending_queue_fill',  'CB pending disk Queues fill rate', True)
+			check_disk_queues('vb_pending_queue_fill',  'CB pending disk Queues fill rate', True, result)
 		else:
 			print "wrong options combination"
 			sys.exit(2)
 	if options.disk_queues_drain_rate and options.disk_queues:
 		if options.pending:
-			check_disk_queues('vb_pending_queue_drain', 'CB pending disk Queues drain rate', True)
+			check_disk_queues('vb_pending_queue_drain', 'CB pending disk Queues drain rate', True, result)
 		else:
 			print "wrong options combination"
 			sys.exit(2)
