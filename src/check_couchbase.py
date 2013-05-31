@@ -285,6 +285,44 @@ def check_high_watermark(result):
 		status_value = samples['ep_mem_high_wat'].pop()
 	check_levels('CB high watermark', status_value, True)
 
+def httpWarnings(returnCode):
+	if r.status_code == requests.codes.created:
+		print "No HTTP response body returns - 201 error"
+		return sys.exit(2)
+	elif r.status_code == requests.codes.accepted:
+		print "Request proccessing is not complete - 202 error"
+		return sys.exit(2)
+	elif r.status_code == requests.codes.no_content:
+		print "No content - 204 error"
+		return sys.exit(2)
+	elif r.status_code == requests.codes.bad_request:
+		print "Bad request - 400 error"
+		return sys.exit(2)
+	elif r.status_code == requests.codes.unauthorized:
+		print "Unauthorized - 401 error"
+		return sys.exit(2)
+	elif r.status_code == requests.codes.forbidden:
+		print "Forbidden - 403 error"
+		return sys.exit(2)
+	elif r.status_code == requests.codes.not_found:
+		print "Not found - 404 error"
+		return sys.exit(2)
+	elif r.status_code == requests.codes.not_acceptable:
+		print "Not acceptable - error 406" error
+		return sys.exit(2)
+	elif r.status_code == requests.codes.conflict:
+		print "Conflict error- 409 error"
+		return sys.exit(2)
+	elif r.status_code == requests.codes.internal_server_error:
+		print "Internal server error - 500 error"
+		return sys.exit(2)
+	elif r.status_code == requests.codes.not_implemented:
+		print "Not Implemented - 501 error"
+		return sys.exit(2)
+	elif r.status_code == requests.codes.service_unavailable:
+		print "Service error - 503 error"
+		return sys.exit(2)		
+
 # which argument 
 def which_argument(result):	
 	if options.operations_per_second:
@@ -472,6 +510,7 @@ try:
 	else:
 		url = ''.join(['http://', options.ip, ':', options.port, '/pools/default/buckets/', options.bucket, '/stats/'])
 		r = requests.get(url, auth=(options.username, options.password))
+		httpWarnings(r.status_code)
 		result = r.json()
 		which_argument(result)
 		
