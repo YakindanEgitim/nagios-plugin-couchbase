@@ -12,7 +12,7 @@ Ebru Akagündüz ebru.akagunduz@gmail.com
 
 #### Summary Statistics
 
-If you want to check level cluster, you should use following:
+Following commands show information based on the currently selected bucket:
 <pre><code>
 define command{
   command_name  cb_item_count
@@ -29,24 +29,7 @@ define command{
   command_line  $USER1$/check_couchbase.py -u $USER2$ -p $USER3$ -I $HOSTADDRESS$  -P $ARG1$ -b $ARG2$ --memory-used -W $ARG3$ -C $ARG4$
 }
 </code></pre>
-If you want to check level node, you should add the parameter '--node'.
-<pre><code>
-define command{
-  command_name  cb_mem_used
-  command_line  $USER1$/check_couchbase.py -u $USER2$ -p $USER3$ -I $HOSTADDRESS$ -b $ARG2$ --memory-used --node -W $ARG3$ -C $ARG4$
-}
-</code></pre>
-In addition, if your CouchBase 'cbstats' command path different from default (/opt/bin/couchbase/cbstats), you should define 'cbstats' path.
-<pre><code>
-define command{
-  command_name  cb_mem_used
-  command_line  $USER1$/check_couchbase.py -u $USER2$ -p $USER3$ -I $HOSTADDRESS$ -b $ARG2$ --memory-used --node --cbstats /full_path/ -W $ARG3$ -C $ARG4$
-}
-</code></pre>
-If you want to use more options (--disk-reads-per-sec, --high-watermark, --cache-miss-ratio .. etc.), you can see using '--help' parameter.
-<pre<code>
-$/usr/lib/nagios/plugins/check_couchbase.py --help
-</code></pre>
+
 #### vBucket Resources Statistics
 
 You should '--vbucket' parameter for checking vBucket resources. vBucket resources states are pending, total, replica and active. 
@@ -54,7 +37,6 @@ For example if you want to check ejections total state of vbucket, you must spec
 You can see below some examples for vbucket resources checks.
 
 <pre><code>
-#cluster level
 define command{
   command_name  cb_vb_active_new_items
   command_line  $USER1$/check_couchbase.py -u $USER2$ -p $USER3$ -I $HOSTADDRESS$  -P $ARG1$ -b $ARG2$ --vbucket --active --new-items -W $ARG3$ -C $ARG4$
@@ -77,6 +59,8 @@ define command{
 </code></pre>
 
 #### Disk Queue Statistics
+
+You should use '--disk-queues' parameter. Disk queues states are pending, total, replica and active.
 <pre><code>
 define command{
   command_name  cb_vb_disk_queues_pending_fill_rate
@@ -89,7 +73,31 @@ define command{
 }
 </code></pre>
 
+**Note1 :** We used above commands for cluster level. If you want to query in node level for statistic, you add '--node' parameter and you can remove some parameters. 
+So you can edit following:
+<pre><code>
+define command{
+  command_name  cb_vb_disk_queues_pending_drain_rate
+  command_line  $USER1$/check_couchbase.py -I $HOSTADDRESS$ -b $ARG2$  --disk-queues --pending --drain-rate --node -W $ARG3$ -C $ARG4$
+}
+</code></pre>
 
+In addition, if your CouchBase 'cbstats' command path different from default (/opt/bin/couchbase/cbstats), you should add '--cbstats' option.
+In this case, you must define full path for '--cbstats' parameter. 
+
+<pre><code>
+define command{
+  command_name  cb_mem_used
+  command_line  $USER1$/check_couchbase.py -I $HOSTADDRESS$ -b $ARG2$ --memory-used --node --cbstats /full_path/ -W $ARG3$ -C $ARG4$
+}
+</code></pre>
+
+You should use '--cbstats' parameter only in node level.
+
+**Note2 :** If you want to use more options (--disk-reads-per-sec, --high-watermark, --cache-miss-ratio .. etc.), you can see using <br />'--help' parameter.
+<pre><code>
+$/usr/lib/nagios/plugins/check_couchbase.py --help
+</code></pre>
 ## Live Demo
 You can see how it works on web page. So you should visit "http://54.234.80.73/nagios3/" adrres using username "testuser", password "password".
 
