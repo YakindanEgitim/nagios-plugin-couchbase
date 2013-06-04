@@ -38,7 +38,7 @@ def option_none(option, opt, value, parser):
 	
 # get specific status using cbstat
 def get_status(required_status):
-	cbstats_cmd = ''.join([options.cbstat, ' ', options.ip, ':11210 ', '-b ', options.bucket, ' all', '|grep ', required_status])
+	cbstats_cmd = ''.join([options.cbstats, ' ', options.ip, ':11210 ', '-b ', options.bucket, ' all', '|grep ', required_status])
 	cmd = subprocess.Popen(cbstats_cmd, shell=True, stdout=subprocess.PIPE)
 	return_code = cmd.wait()
 	stdout = cmd.communicate()[0]
@@ -98,8 +98,13 @@ def check_levels(message, status_value, divide):
 			print "OK - " + message, status, size_type
 			return sys.exit(nagios_codes['OK'])
 
-def check_disk_queues(stat_name, message, divide):
-	stat_value = get_status(stat_name)
+def check_disk_queues(stat_name, message, divide, result):
+	if result == None:
+		stat_value = get_status(stat_name)
+	else:
+		op = result['op']
+		samples = op['samples']
+		stat_value = samples[stat_name].pop()
 	check_levels(message, stat_value, divide)
 
 def check_vbucket(stat_name, message, divide, result):
