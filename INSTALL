@@ -1,0 +1,7 @@
+nagios-couchbase-plugin is a plugin for monitoring Couchbase.
+
+INSTALLATION
+
+	* sudo python setup.py install
+
+# You must install Nagios and CoucBase 2.0 for using plugin.
