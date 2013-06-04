@@ -9,31 +9,86 @@ Ebru Akagündüz ebru.akagunduz@gmail.com
 <pre><code> git clone https://github.com/YakindanEgitim/nagios-plugin-couchbase.git</code></pre>
 
 ## Usage
+
+#### Summary Statistics
+
+If you want to check level cluster, you should use following:
 <pre><code>
-Usage: couchbase.py [options]
-Options:
-  -I                      Ip
-  -u                      Username
-  -p                      Password
-  -P                      Port
-  -b                      bucket name
-  -W                      warning
-  -C                      critical
-  --OPS                   Total amount of operations per second for specific bucket
-  --memory-used           memory used
-  --disk-read             Number of reads per second from disk for specific bucket 
-  --item-count            Number of unique active items 
-  --CAS                   CAS per second for specific bucket
-  --del-per-second        Number of delete operations per second for specific bucket
-  --low-watermark         Low watermark
-  --high-watermark        High watermark
-  --cbstat                cbstats command path of couchbase (default /opt/couchbase/bin/cbstats)
-  --cache-miss-ratio      Percentage of reads per second for specific bucket
-  --create-per-sec        Number of new items created on disk per second for specific bucket
-  --update-per-sec        Number of items updated on disk for specific bucket
-  --set-per-sec           set operations per second for specific bucket
-  --disk-write-queue      Number of items waiting to be written to disk in bucket
+define command{
+  command_name  cb_item_count
+  command_line  $USER1$/check_couchbase.py -u $USER2$ -p $USER3$ -I $HOSTADDRESS$  -P $ARG1$ -b $ARG2$ --item-count -W $ARG3$ -C $ARG4$
+}
+
+define command{
+  command_name  cb_low_watermark
+  command_line  $USER1$/check_couchbase.py -u $USER2$ -p $USER3$ -I $HOSTADDRESS$  -P $ARG1$ -b $ARG2$ --low-watermark -W $ARG3$ -C $ARG4$
+}
+
+define command{
+  command_name  cb_mem_used
+  command_line  $USER1$/check_couchbase.py -u $USER2$ -p $USER3$ -I $HOSTADDRESS$  -P $ARG1$ -b $ARG2$ --memory-used -W $ARG3$ -C $ARG4$
+}
 </code></pre>
+If you want to check level node, you should add the parameter '--node'.
+<pre><code>
+define command{
+  command_name  cb_mem_used
+  command_line  $USER1$/check_couchbase.py -u $USER2$ -p $USER3$ -I $HOSTADDRESS$ -b $ARG2$ --memory-used --node -W $ARG3$ -C $ARG4$
+}
+</code></pre>
+In addition, if your CouchBase 'cbstats' command path different from default (/opt/bin/couchbase/cbstats), you should define 'cbstats' path.
+<pre><code>
+define command{
+  command_name  cb_mem_used
+  command_line  $USER1$/check_couchbase.py -u $USER2$ -p $USER3$ -I $HOSTADDRESS$ -b $ARG2$ --memory-used --node --cbstats /full_path/ -W $ARG3$ -C $ARG4$
+}
+</code></pre>
+If you want to use more options (--disk-reads-per-sec, --high-watermark, --cache-miss-ratio .. etc.), you can see using '--help' parameter.
+<pre<code>
+$/usr/lib/nagios/plugins/check_couchbase.py --help
+</code></pre>
+#### vBucket Resources Statistics
+
+You should '--vbucket' parameter for checking vBucket resources. vBucket resources states are pending, total, replica and active. 
+For example if you want to check ejections total state of vbucket, you must specify '--vbucket --total --ejections'. 
+You can see below some examples for vbucket resources checks.
+
+<pre><code>
+#cluster level
+define command{
+  command_name  cb_vb_active_new_items
+  command_line  $USER1$/check_couchbase.py -u $USER2$ -p $USER3$ -I $HOSTADDRESS$  -P $ARG1$ -b $ARG2$ --vbucket --active --new-items -W $ARG3$ -C $ARG4$
+}
+
+define command{
+  command_name  cb_vb_pending_new_items
+  command_line  $USER1$/check_couchbase.py -u $USER2$ -p $USER3$ -I $HOSTADDRESS$  -P $ARG1$ -b $ARG2$ --vbucket --pending --new-items -W $ARG3$ -C $ARG4$
+}
+
+define command{
+  command_name  cb_vb_total_new_items
+  command_line  $USER1$/check_couchbase.py -u $USER2$ -p $USER3$ -I $HOSTADDRESS$  -P $ARG1$ -b $ARG2$ --vbucket --total --new_items -W $ARG3$ -C $ARG4$
+}
+
+define command{
+  command_name  cb_vb_replica_new_items
+  command_line  $USER1$/check_couchbase.py -u $USER2$ -p $USER3$ -I $HOSTADDRESS$  -P $ARG1$ -b $ARG2$ --vbucket --replica --new-items -W $ARG3$ -C $ARG4$
+}
+</code></pre>
+
+#### Disk Queue Statistics
+<pre><code>
+define command{
+  command_name  cb_vb_disk_queues_pending_fill_rate
+  command_line  $USER1$/check_couchbase.py -u $USER2$ -p $USER3$ -I $HOSTADDRESS$  -P $ARG1$ -b $ARG2$  --disk-queues --pending --fill-rate -W $ARG3$ -C $ARG4$
+}
+
+define command{
+  command_name  cb_vb_disk_queues_pending_drain_rate
+  command_line  $USER1$/check_couchbase.py -u $USER2$ -p $USER3$ -I $HOSTADDRESS$  -P $ARG1$ -b $ARG2$  --disk-queues --pending --drain-rate -W $ARG3$ -C $ARG4$
+}
+</code></pre>
+
 
 ## Live Demo
 You can see how it works on web page. So you should visit "http://54.234.80.73/nagios3/" adrres using username "testuser", password "password".
