@@ -1,4 +1,4 @@
-nagios-plugin-couchbase (1.0-1) unstable; urgency=low
+nagios-plugin-couchbase (1.0-1) stable; urgency=low
 
   * Initial release
 
