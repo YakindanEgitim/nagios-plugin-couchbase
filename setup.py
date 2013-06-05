@@ -28,7 +28,7 @@ setup(
 	author = "Ebru Akagunduz",
 	author_email = "ebru.akagunduz@gmail.com",
 	packages = ['src'],
-	license = "GPLv3"
+	license = "GPLv3",
 	data_files = [('/usr/lib/nagios/plugins/', glob.glob("src/check_couchbase.py"))]
 )
 
