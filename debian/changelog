@@ -1,0 +1,5 @@
+nagios-plugin-couchbase (1.0-1) unstable; urgency=low
+
+  * Initial release
+
+ -- Ebru Akagunduz <ebru.akagunduz@gmail.com>  Wed, 05 Jun 2013 08:16:36 +0000
