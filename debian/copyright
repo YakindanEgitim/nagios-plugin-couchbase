@@ -1,0 +1,21 @@
+This package was debianized by Ebru Akagunduz <ebru.akagunduz@gmail.com> on
+Thu, 5 Jun 2013 14:17:17 +0000.
+
+It was downloaded from:
+ http://github.com/YakindanEgitim/nagios-plugin-couchbase/
+
+Upstream Author:
+ Ebru Akagunduz <ebru.akagunduz@gmail.com>
+
+Files: *
+Copyright: Copyright 2013 Ebru Akagunduz
+License: GPL-3
+ On Debian systems, the complete text of the GPL-3 can be found in
+ /usr/share/common-licenses/GPL-3.
+
+Files: debian/*
+Copyright: Copyright 2013 Ebru Akagunduz <ebru.akagunduz@gmail.com>
+License: GPL-3
+ On Debian systems, the complete text of the GPL-3 can be found in
+ /usr/share/common-licenses/GPL-3.
+~                                   
