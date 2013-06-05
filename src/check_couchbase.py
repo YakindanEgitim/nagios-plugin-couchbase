@@ -234,7 +234,7 @@ def check_ops_per_second(result):
 		delete_misses = samples['delete_misses'].pop()
 		delete_hits = samples['delete_hits'].pop()
 	status_value = cmd_get + cmd_set + incr_misses + incr_hits + decr_misses
-	status_value = decr_hits + delete_misses + delete_hits
+	status_value += decr_hits + delete_misses + delete_hits
 	check_levels('CB ops per sec', status_value, True)
 		
 	
