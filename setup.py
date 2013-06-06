@@ -22,14 +22,15 @@ from distutils.core import setup
 import glob
 
 setup(
-	name = "nagios-plugin-couchbase",
-	version = "1.0",
-	description = "A simple nagios plugin to monitor Couchbase 2.0 servers/cluster.",
-	author = "Ebru Akagunduz",
-	author_email = "ebru.akagunduz@gmail.com",
-	packages = ['src'],
-	license = "GPLv3",
-	data_files = [('/usr/lib/nagios/plugins/', glob.glob('src/check_couchbase.py')), 
-				  ('/usr/share/man/man1', glob.glob('src/check_couchbase.1.gz'))]
+    name="nagios-plugin-couchbase",
+    version="1.0",
+    description="Nagios plugin to monitor Couchbase 2.0 servers/cluster.",
+    author="Ebru Akagunduz",
+    author_email="ebru.akagunduz@gmail.com",
+    packages=['src'],
+    license="GPLv3",
+    data_files=[
+        ('/usr/lib/nagios/plugins/', glob.glob('src/check_couchbase.py')),
+        ('/usr/share/man/man1', glob.glob('src/check_couchbase.1.gz'))
+	]
 )
-
