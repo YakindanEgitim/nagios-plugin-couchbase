@@ -35,8 +35,8 @@ nagios_codes = {
 }
 
 
-# option required none
 def option_none(option, opt, value, parser):
+    """ checks a parameter for taking value"""
     if parser.rargs and not parser.rargs[0].startswith('-'):
         print "Option arg error"
         print opt, " option should be empty"
@@ -44,8 +44,8 @@ def option_none(option, opt, value, parser):
     setattr(parser.values, option.dest, True)
 
 
-# get specific status using cbstat
 def get_status(required_status):
+    """get specific status using cbstat"""
     cbstats_cmd = ''.join([options.cbstats, ' ', options.ip, ':11210 ',
                            '-b ', options.bucket, ' all', '|grep ', required_status])
     cmd = subprocess.Popen(cbstats_cmd, shell=True, stdout=subprocess.PIPE)
@@ -69,8 +69,8 @@ def get_status(required_status):
             return status_value
 
 
-# status level critical, warning, ok
 def check_levels(message, status_value, divide):
+    """status level critical, warning, ok"""
     size_type = ""
     status = status_value
     if divide:
@@ -110,6 +110,8 @@ def check_levels(message, status_value, divide):
 
 
 def check_disk_queues(stat_name, message, divide, result):
+    """shows the activity on the backend disk storage used
+    for persistence within a data bucket """
     if result is None:
         stat_value = get_status(stat_name)
     else:
@@ -120,6 +122,8 @@ def check_disk_queues(stat_name, message, divide, result):
 
 
 def check_vbucket(stat_name, message, divide, result):
+    """provides detailed information on the vBucket resources across 
+    the cluster, including the active, replica and pending operations."""
     if result is None:
         stat_value = get_status(stat_name)
     else:
@@ -129,8 +133,8 @@ def check_vbucket(stat_name, message, divide, result):
     check_levels(message, stat_value, divide)
 
 
-# number of gets operations per sec from specific bucket
 def check_gets_per_sec(result):
+    """number of gets operations per sec from specific bucket"""
     if result is None:
         status_value = get_status('cmd_get')
     else:
@@ -140,8 +144,8 @@ def check_gets_per_sec(result):
     check_levels('CB gets per sec', status_value, True)
 
 
-# size of the disk write queue from specific bucket
 def check_disk_write_queue(result):
+    """size of the disk write queue from specific bucket"""
     if result is None:
         ep_queue_size = get_status('ep_queue_size')
         ep_flusher_todo = get_status('ep_flusher_todo')
@@ -154,8 +158,8 @@ def check_disk_write_queue(result):
     check_levels('CB disk write queue', status_value, False)
 
 
-# number of set operations
 def check_sets_per_sec(result):
+    """number of set operations"""
     if result is None:
         status_value = get_status('cmd_set')
     else:
@@ -165,8 +169,8 @@ def check_sets_per_sec(result):
     check_levels('CB sets per sec', status_value, True)
 
 
-# number of existing items updated in specific bucket
 def check_disk_updates_per_sec(result):
+    """number of existing items updated in specific bucket"""
     if result is None:
         vb_active_ops_update = get_status('vb_active_ops_update')
         vb_replica_ops_update = get_status('vb_replica_ops_update')
@@ -182,8 +186,8 @@ def check_disk_updates_per_sec(result):
     check_levels('CB disk updates per sec', status_value, True)
 
 
-# number of new items created in specific bucket
 def check_disk_creates_per_sec(result):
+    """number of new items created in specific bucket"""
     if result is None:
         vb_active_ops_create = get_status('vb_active_ops_create')
         vb_replica_ops_create = get_status('vb_replica_ops_create')
@@ -199,9 +203,9 @@ def check_disk_creates_per_sec(result):
     check_levels("CB disk creates per sec: ", status_value, True)
 
 
-# percentage of reads per second to specific bucket which required a read
-# from disk rather than RAM.
 def check_cache_miss_ratio():
+    """percentage of reads per second to specific bucket which required a read
+    from disk rather than RAM."""
     ep_bg_fetched = get_status('ep_bg_fetched')
     cmd_get = get_status('cmd_get')
     if cmd_get == 0:
@@ -211,8 +215,8 @@ def check_cache_miss_ratio():
         check_levels('CB cache miss ratio', status_value, False)
 
 
-# number of reads per second from disk for specific bucket
 def check_disk_reads_per_sec(result):
+    """number of reads per second from disk for specific bucket"""
     if result is None:
         status_value = get_status('ep_bg_fetched')
     else:
@@ -222,8 +226,8 @@ def check_disk_reads_per_sec(result):
     check_levels('CB disk read per sec', status_value, True)
 
 
-# item count for specific bucket
 def check_item_count(result):
+    """item count for specific bucket"""
     if result is None:
         status_value = get_status('curr_items')
     else:
@@ -233,8 +237,8 @@ def check_item_count(result):
     check_levels('CB item count', status_value, True)
 
 
-# total operations per second
 def check_ops_per_second(result):
+    """total operations per second"""
     if result is None:
         cmd_get = get_status('cmd_get')
         cmd_set = get_status('cmd_set')
@@ -260,8 +264,8 @@ def check_ops_per_second(result):
     check_levels('CB ops per sec', status_value, True)
 
 
-# total amount of ram used by specific bucket
 def check_memory_used(result):
+    """total amount of ram used by specific bucket"""
     if result is None:
         status_value = get_status('mem_used')
     else:
@@ -271,8 +275,9 @@ def check_memory_used(result):
     check_levels('CB memory used', status_value, True)
 
 
-# number of CAS operations per sec for data that specific bucket contains
 def check_cas_per_sec(result):
+    """number of CAS operations per sec for data 
+    that specific bucket contains"""
     if result is None:
         status_value = get_status('cas_hits')
     else:
@@ -282,8 +287,8 @@ def check_cas_per_sec(result):
     check_levels('CB cas per sec', status_value, True)
 
 
-# number of delete operations per second for specific bucket
 def check_deletes_per_sec(result):
+    """number of delete operations per second for specific bucket"""
     if result is None:
         status_value = get_status('delete_hits')
     else:
@@ -293,8 +298,8 @@ def check_deletes_per_sec(result):
     check_levels("CB delete per sec: ", status_value, True)
 
 
-# low water mark for memory usage
 def check_low_watermark(result):
+    """low water mark for memory usage"""
     if result is None:
         status_value = get_status('ep_mem_low_wat')
         check_levels('CB low watermark', status_value, True)
@@ -306,8 +311,8 @@ def check_low_watermark(result):
         check_levels('CB low watermark', status_value, True)
 
 
-# high water mark for memory usage
 def check_high_watermark(result):
+    """high water mark for memory usage"""
     if result is None:
         status_value = get_status('ep_mem_high_wat')
     else:
@@ -317,7 +322,8 @@ def check_high_watermark(result):
     check_levels('CB high watermark', status_value, True)
 
 
-def http_warnings(returnCode):
+def http_warnings(return_code):
+    """ returns http warnings codes"""
     if r.status_code == requests.codes.created:
         print "No HTTP response body returns - 201 error"
         return sys.exit(2)
@@ -356,8 +362,8 @@ def http_warnings(returnCode):
         return sys.exit(2)
 
 
-# which argument
 def which_argument(result):
+    """calls related option for the choosen option"""
     if options.operations_per_second:
         check_ops_per_second(result)
     if options.cas:
