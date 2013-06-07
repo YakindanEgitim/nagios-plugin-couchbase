@@ -1,19 +1,19 @@
 # nagios-plugin-couchbase
 
-A simple nagios plugin to monitor Couchbase 2.0 servers/cluster.
+nagios-plugin-couchbase, CouchBase'i izlemek için bir eklentidir.
 
-## Author
+## Geliştiricisi
 Ebru Akagündüz ebru.akagunduz@gmail.com
 
-## Installation
-<pre><code> git clone https://github.com/YakindanEgitim/nagios-plugin-couchbase.git</code></pre>
+## Kurulum
+  * git clone https://github.com/YakindanEgitim/nagios-plugin-couchbase.git
 
-## Usage
+## Kullanım
 
 #### Summary Statistics
 
-Following commands show information based on the currently selected bucket:
-<pre><code>
+Aşağıdaki gibi komutlar tanımlayarak CouchBase'deki temel istatistikleri izleyebilirsiniz:
+
 define command{
   command_name  cb_item_count
   command_line  $USER1$/check_couchbase.py -u $USER2$ -p $USER3$ -I $HOSTADDRESS$  -P $ARG1$ -b $ARG2$ --item-count -W $ARG3$ -C $ARG4$
@@ -28,15 +28,14 @@ define command{
   command_name  cb_mem_used
   command_line  $USER1$/check_couchbase.py -u $USER2$ -p $USER3$ -I $HOSTADDRESS$  -P $ARG1$ -b $ARG2$ --memory-used -W $ARG3$ -C $ARG4$
 }
-</code></pre>
 
 #### vBucket Resources Statistics
 
-You should '--vbucket' parameter for checking vBucket resources. vBucket resources states are pending, total, replica and active. 
-For example if you want to check ejections total state of vbucket, you must specify '--vbucket --total --ejections'. 
-You can see below some examples for vbucket resources checks.
 
-<pre><code>
+'--vbucket' parametresini kullanarak vBucket durumlarını inceleyebilirsiniz. vBucket durumları bekleme (pending), toplama (total), kopyalama (replica) ve aktif (active) gibi durumlarda bulunabilir.
+Örneğin aktif bir vBucket'ın bellekteki kullanıcı verilerini incelemek istiyorsak, '--vbucket --active --user-data-ram' şeklinde belirtmeliyiz.
+vBucket kaynaklarını izlemek için aşağıda tanımlanmış bir kaç örnek görebilirsiniz:
+
 define command{
   command_name  cb_vb_active_new_items
   command_line  $USER1$/check_couchbase.py -u $USER2$ -p $USER3$ -I $HOSTADDRESS$  -P $ARG1$ -b $ARG2$ --vbucket --active --new-items -W $ARG3$ -C $ARG4$
@@ -56,12 +55,12 @@ define command{
   command_name  cb_vb_replica_new_items
   command_line  $USER1$/check_couchbase.py -u $USER2$ -p $USER3$ -I $HOSTADDRESS$  -P $ARG1$ -b $ARG2$ --vbucket --replica --new-items -W $ARG3$ -C $ARG4$
 }
-</code></pre>
 
 #### Disk Queue Statistics
 
-You should use '--disk-queues' parameter. Disk queues states are pending, total, replica and active.
-<pre><code>
+Disk kuyruğundaki durumları incelemek için ise '--disk-queues' parametresini kullanmalıyız. 
+Disk kuyruğunda verileri gene bekleme, toplama, kopyalama ve aktif gibi durumlarda bulunabilirler.
+
 define command{
   command_name  cb_vb_disk_queues_pending_fill_rate
   command_line  $USER1$/check_couchbase.py -u $USER2$ -p $USER3$ -I $HOSTADDRESS$  -P $ARG1$ -b $ARG2$  --disk-queues --pending --fill-rate -W $ARG3$ -C $ARG4$
@@ -71,35 +70,34 @@ define command{
   command_name  cb_vb_disk_queues_pending_drain_rate
   command_line  $USER1$/check_couchbase.py -u $USER2$ -p $USER3$ -I $HOSTADDRESS$  -P $ARG1$ -b $ARG2$  --disk-queues --pending --drain-rate -W $ARG3$ -C $ARG4$
 }
-</code></pre>
 
-**Note1 :** We used above commands for cluster level. If you want to query in node level for statistic, you add '--node' parameter and you can remove some parameters. 
-So you can edit following:
-<pre><code>
+
+Not1 : Yukarıdaki komutları küme (cluster) seviyesindeki soruglar için yaptık. Eğer sunucu (node ya da server) seviyesinde sorgu yapmak isterseniz '--node' parametresini kullanmalısınız.
+Ve cluster için koyduğunuz bir kaç parametreyi de kaldırabilirsiniz. Örnek olarak aşağıdaki komut tanımlaması gibi değişiklik yapabilirsiniz:
+
 define command{
   command_name  cb_vb_disk_queues_pending_drain_rate
   command_line  $USER1$/check_couchbase.py -I $HOSTADDRESS$ -b $ARG2$  --disk-queues --pending --drain-rate --node -W $ARG3$ -C $ARG4$
 }
-</code></pre>
 
-In addition, if your CouchBase 'cbstats' command path different from default (/opt/bin/couchbase/cbstats), you should add '--cbstats' option.
-In this case, you must define full path for '--cbstats' parameter. 
+Ek olarak, eğer sisteminizde CouchBase 'cbstats' komutunun yolu varsayılandan (/opt/bin/couchbase/cbstats) farklıysa,
+kendi sisteminizideki 'cbstats' komutunun tam yolunu '--cbstats' parametresini ekleyerek belirtmelisiniz.
 
-<pre><code>
+
 define command{
   command_name  cb_mem_used
   command_line  $USER1$/check_couchbase.py -I $HOSTADDRESS$ -b $ARG2$ --memory-used --node --cbstats /full_path/ -W $ARG3$ -C $ARG4$
 }
-</code></pre>
 
-You should use '--cbstats' parameter only in node level.
+Sadece node seviyesinde sorgu yaptığınız durumlarda '--cbstats' parametrsini kullanmalısınız.
 
-**Note2 :** If you want to use more options (--disk-reads-per-sec, --high-watermark, --cache-miss-ratio .. etc.), you can see using <br />'--help' parameter.
-<pre><code>
+Not2 : Eğer ekleniyi kullanmak için daha fazla seçenek görmek istyorsanız (--disk-reads-per-sec, --high-watermark, --cache-miss-ratio .. vb.),
+'--help' parametresini kullanmalısınız.
+
 $/usr/lib/nagios/plugins/check_couchbase.py --help
-</code></pre>
-## Live Demo
-You can see how it works on web page. So you should visit "http://54.234.80.73/nagios3/" adrres using username "testuser", password "password".
 
-##LICENSE
-Nagios Plugin Couchbase is available under the [GPLv3](http://gplv3.fsf.org/)
+## Canlı Demo
+Bu eklentinin nasıl çalıştığını görmek için "http://54.234.80.73/nagios3/" adresini, "testuser" kullanıcı adı ve "password" parolası ile ziyaret edebilirsiniz.
+
+## Lisans
+Nagios Plugin Couchbase [GPLv3](http://gplv3.fsf.org/) ile lisanslanmıştır.
