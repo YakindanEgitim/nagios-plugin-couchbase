@@ -7,6 +7,8 @@ Standards-Version: 3.9.1
 
 Package: nagios-plugin-couchbase
 Architecture: all
-Depends: ${misc:Depends}, ${python:Depends}
+Depends: ${misc:Depends}, 
+ ${python:Depends}
+ nagios3
 Description: A simple nagios plugin to monitor Couchbase 2.0 servers/clus
 
