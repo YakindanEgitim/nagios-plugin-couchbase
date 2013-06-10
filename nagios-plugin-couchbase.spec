@@ -7,6 +7,7 @@ Summary: A simple nagios plugin to monitor Couchbase 2.0 servers/cluster.
 Name: %{name}
 Version: %{version}
 Release: %{release}
+Requires: nagios3
 Source0: %{name}-%{unmangled_version}.tar.gz
 License: GPLv3
 Group: Development/Libraries
