@@ -664,3 +664,4 @@ try:
 except Exception:
     print "Invalid option combination"
     print "Try '--help' for more information "
+    sys.exit(2)
