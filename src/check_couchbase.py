@@ -382,13 +382,10 @@ def which_argument(result):
         check_item_count(result)
     if options.cache_miss_ratio:
         check_cache_miss_ratio()
-    # wrong solution
     if options.disk_creates_per_sec:
         check_disk_creates_per_sec(result)
-    # wrong solution
     if options.disk_updates_per_sec:
         check_disk_updates_per_sec(result)
-    # wrong solution
     if options.sets_per_sec:
         check_sets_per_sec(result)
     if options.disk_write_queue:
