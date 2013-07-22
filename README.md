@@ -98,8 +98,6 @@ You should use '--cbstats' parameter only in node level.
 <pre><code>
 $/usr/lib/nagios/plugins/check_couchbase.py --help
 </code></pre>
-## Live Demo
-You can see how it works on web page. So you should visit "http://54.234.80.73/nagios3/" adrres using username "testuser", password "password".
 
 ##LICENSE
 Nagios Plugin Couchbase is available under the [GPLv3](http://gplv3.fsf.org/)
