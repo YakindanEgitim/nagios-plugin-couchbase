@@ -99,9 +99,9 @@ You should use '--cbstats' parameter only in node level.
 $/usr/lib/nagios/plugins/check_couchbase.py --help
 </code></pre>
 
-##LICENSE
+##License
 Nagios Plugin Couchbase is available under the [GPLv3](http://gplv3.fsf.org/)
 
-##WEBSITE
+##Website
 You can access project website [here](http://yakindanegitim.org/nagios-plugin-couchbase/).
 
