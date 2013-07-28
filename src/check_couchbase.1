@@ -1,0 +1,159 @@
+.\" Man page for check_couchbase
+."\ Contact Ebru Akagunduz <ebru.akagunduz@gmail.com>
+.TH man 1 "05 Jun 2013" "1.0" "check_couchbase man page"
+
+.SH NAME
+nagios-plugin-couchbase
+
+.SH SYNOPSIS
+.PP 
+A simple Nagios plugin to monitoring Couchbase
+
+.SH DESCRIPTION
+.PP
+    Nagios plugin to monitoring Couchbase
+   
+.TP
+\fB\-I\fR
+Ip address
+.TP 
+\fB\-u\fR
+User name for CouchBase
+.TP
+\fB\-p\fR
+password for CouchBase authorization
+.TP
+\fB\-P\fR
+Port for CouchBase
+.TP
+\fB\-b\fR
+a bucket name on CouchBase
+.TP
+\fB\-W\fR
+warning treshold for statistic on CouchBase
+.TP
+\fB\-C\fR
+critical treshold for statistic on CouchBase
+.TP
+\fB\-\-OPS\fR, \fB\-\-operations-per-sec\fR,
+operations per second for specific bucket on Couchbase
+.TP
+\fB\-\-memory-used\fR
+memory used for specific bucket on Couchbase
+.TP
+\fB\-\-disk-reads-per-sec\fR
+disk reads per second for specific bucket on Couchbase
+.TP
+\fB\-\-item-count\fR
+item counts for specific bucket on Couchbase
+.TP
+\fB\-\-CAS\fR
+check and set operations on CouchBase
+.TP
+\fB\-\-deletes-per-sec\fR
+deletes per second for specific bucket on Couchbase
+.TP
+\fB\-\-low-watermark\fR
+low watermark for specific bucket on Couchbase
+.TP
+\fB\-\-high-watermark\fR
+high watermark for specific bucket on Couchbase
+.TP
+\fB\-\-cbstats\fR
+cbstats command full path for nagios plugin couchbase
+.TP
+\fB\-\-cache-miss-ratio\fR
+percentage of reads per second from specific bucket
+.TP
+\fB\-\-disk-creates-per-sec\fR
+disk creates per second check for Couchbase statistic
+.TP
+\fB\-\-disk-updates-per-sec\fR
+disk updates per second
+.TP
+\fB\-\-sets-per-sec\fR
+number of set/update operations per second for specific bucket
+.TP
+\fB\-\-gets-per-sec\fR
+number of get operations serviced by specific bucket
+.TP
+\fB\-\-disk-write-queue\fR
+size of the disk write queue for specific bucket
+.TP
+\fB\-\-vbucket-count\fR
+the number of vBuckets within the specified state
+.TP
+\fB\-\-vbucket\fR
+any of vBuckets resources checks
+.TP
+\fB\-\-active\fR
+active state for vBuckets
+.TP
+\fB\-\-replica\fR
+replica state for vBuckets
+.TP
+\fB\-\-pending\fR
+pending state for vBuckets
+.TP
+\fB\-\-total\fR
+total state for vBuckets
+.TP
+\fB\-\-items\fR
+number of items within the vBucket of the specified state
+.TP
+\fB\-\-resident\fR
+Percentage of items within the vBuckets of the specified state that are resident (in RAM)
+.TP
+\fB\-\-new-items\fR
+number of new items created in vBuckets
+.TP
+\fB\-\-ejections\fR
+number of items ejected per second within the vBuckets of the specified state
+.TP
+\fB\-\-user-data-ram\fR
+size of user data within vBuckets of the specified state that are resident in RAM
+.TP
+\fB\-\-meta-data-ram\fR
+size of item metadata within the vBuckets of the specified state that are resident in RAM
+.TP
+\fB\-\-disk-queues\fR
+displays the information for data being placed into the disk queues
+.TP
+\fB\-\-disk-items\fR
+the number of items waiting to be written to disk for this bucket for this state
+.TP
+\fB\-\-fill-rate\fR
+the number of items per second being added to the disk queue for the corresponding state
+.TP
+\fB\-\-drain-rate\fR
+number of items actually written to disk from the disk queue for the corresponding state
+.TP
+\fB\-\-node\fR
+get couchbase statistics at node level
+ 
+.SH EXAMPLES
+.TP
+\fB$USER1$/check_couchbase.py -u $USER2$ -p $USER3$ -I $HOSTADDRESS$  -P $ARG1$ -b $ARG2$ --item-count -W $ARG3$ -C $ARG4$\fR
+
+Above command shows information based on the currently selected bucket
+
+.TP  
+\fB$USER1$/check_couchbase.py -u $USER2$ -p $USER3$ -I $HOSTADDRESS$  -P $ARG1$ -b $ARG2$ --vbucket --total --new_items -W $ARG3$ -C $ARG4$\fR
+
+You should '--vbucket' parameter for checking vBucket resources. vBucket resources states are pending, total, replica and active. For example if you want to check ejections total state of vbucket, you must specify '--vbucket --total --ejections'. You can see above an example for vbucket resources checks.
+ 
+.TP   
+\fB$USER1$/check_couchbase.py -u $USER2$ -p $USER3$ -I $HOSTADDRESS$  -P $ARG1$ -b $ARG2$  --disk-queues --pending --drain-rate -W $ARG3$ -C $ARG4$\fR
+
+You should use '--disk-queues' parameter. Disk queues states are pending, total, replica and active.
+
+.TP    
+\fB$USER1$/check_couchbase.py -I $HOSTADDRESS$ -b $ARG2$  --disk-queues --pending --drain-rate --node -W $ARG3$ -C $ARG4$\fR
+
+If you want to query in node level for statistic, you add '--node' parameter and you can remove some parameters. 
+          
+.SH AUTHOR
+   Ebru Akagunduz 
+
+.SH COPYRIGHT
+    GPLv3
