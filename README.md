@@ -5,6 +5,12 @@ A simple nagios plugin to monitor Couchbase 2.0 servers/cluster.
 ## Author
 Ebru Akagündüz ebru.akagunduz@gmail.com
 
+###Requirements
+<pre>
+# apt-get install nagios3 
+# pip install requests
+</pre>
+
 ## Installation
 <pre><code> git clone https://github.com/YakindanEgitim/nagios-plugin-couchbase.git</code></pre>
 
