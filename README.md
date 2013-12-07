@@ -1,6 +1,6 @@
 # nagios-plugin-couchbase
 
-A simple nagios plugin to monitor Couchbase 2.0 servers/cluster.
+A simple nagios plugin to monitor Couchbase 2.2 servers/cluster.
 
 ## Author
 Ebru Akagündüz ebru.akagunduz@gmail.com
