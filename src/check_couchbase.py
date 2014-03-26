@@ -539,7 +539,7 @@ parser.add_option('-b', '--bucket', dest='bucket',
 parser.add_option('-W', type='int', dest='warning',
 	help='Warning treshold for statistic on CouchBase')
 parser.add_option('-C', type='int', dest='critical',
-	help='Critical treshold for statistic on CouchBase')
+	help='Critical threshold for statistic on CouchBase')
 parser.add_option('--OPS', '--operations-per-sec', action='callback',
 	callback=option_none, dest='operations_per_second',
     help='Operations per second for specific bucket on Couchbase')
