@@ -1,6 +1,7 @@
 # nagios-plugin-couchbase
 
-nagios-plugin-couchbase, CouchBase'i izlemek için bir eklentidir.
+nagios-plugin-couchbase, Couchbase'i izlemek için bir eklentidir.
+Couchbase 2.x serisi için mevcuttur.
 
 ## Geliştiricisi
 Ebru Akagündüz ebru.akagunduz@gmail.com
