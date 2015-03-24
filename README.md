@@ -1,10 +1,8 @@
 # nagios-plugin-couchbase
 
-A simple nagios plugin to monitor Couchbase servers/cluster.<br>
-Compatible with Couchbase 2.x
+A simple nagios plugin to monitor Couchbase 2.x servers/cluster.<br>
 
-## Author
-Ebru Akagündüz ebru.akagunduz@gmail.com
+![alt tag](https://github.com/YakindanEgitim/nagios-plugin-couchbase/raw/master/plugin-screenshot.png)
 
 ###Requirements
 <pre>
@@ -105,6 +103,9 @@ You should use '--cbstats' parameter only in node level.
 <pre><code>
 $/usr/lib/nagios/plugins/check_couchbase.py --help
 </code></pre>
+
+## Author
+Ebru Akagündüz ebru.akagunduz@gmail.com
 
 ##License
 Nagios Plugin Couchbase is available under the [GPLv3](http://gplv3.fsf.org/)
