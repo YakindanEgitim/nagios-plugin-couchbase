@@ -275,6 +275,20 @@ def check_memory_used(result):
     check_levels('CB memory used', status_value, True)
 
 
+def check_percent_memory_used(result):
+    """percentage of available ram used by specific bucket"""
+    if result is None:
+        mem_used = get_status('mem_used')
+        max_size = get_status('ep_max_size')
+    else:
+        op = result['op']
+        samples = op['samples']
+        mem_used = samples['mem_used'].pop()
+        max_size = samples['ep_max_size'].pop()
+    status_value = mem_used / max_size * 100
+    check_levels('CB percentage of memory used', status_value, False)
+
+
 def check_cas_per_sec(result):
     """number of CAS operations per sec for data 
     that specific bucket contains"""
@@ -376,6 +390,8 @@ def which_argument(result):
         check_deletes_per_sec(result)
     if options.memory_used:
         check_memory_used(result)
+    if options.percent_memory_used:
+        check_percent_memory_used(result)
     if options.disk_reads_per_sec:
         check_disk_reads_per_sec(result)
     if options.item_count:
@@ -546,6 +562,9 @@ parser.add_option('--OPS', '--operations-per-sec', action='callback',
 parser.add_option('--memory-used', action='callback',
 	callback=option_none, dest='memory_used',
     help='Memory used for specific bucket on Couchbase')
+parser.add_option('--percent-memory-used', action='callback',
+    callback=option_none, dest='percent_memory_used',
+    help='Percentage of memory used for specific bucket on Couchbase')
 parser.add_option('--disk-reads-per-sec', action='callback',
     callback=option_none,  dest='disk_reads_per_sec',
     help='Disk reads per second for specific bucket on Couchbase')
