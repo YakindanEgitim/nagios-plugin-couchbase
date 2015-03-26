@@ -234,7 +234,7 @@ def check_item_count(result):
         op = result['op']
         samples = op['samples']
         status_value = samples['curr_items'].pop()
-    check_levels('CB item count', status_value, True)
+    check_levels('CB item count', status_value, False)
 
 
 def check_ops_per_second(result):
