@@ -97,8 +97,5 @@ Not2 : Eğer ekleniyi kullanmak için daha fazla seçenek görmek istyorsanız (
 
 $/usr/lib/nagios/plugins/check_couchbase.py --help
 
-## Canlı Demo
-Bu eklentinin nasıl çalıştığını görmek için "http://54.234.80.73/nagios3/" adresini, "testuser" kullanıcı adı ve "password" parolası ile ziyaret edebilirsiniz.
-
 ## Lisans
 Nagios Plugin Couchbase [GPLv3](http://gplv3.fsf.org/) ile lisanslanmıştır.
