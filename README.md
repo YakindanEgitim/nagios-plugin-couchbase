@@ -110,6 +110,9 @@ Ebru Akagündüz ebru.akagunduz@gmail.com
 ##License
 Nagios Plugin Couchbase is available under the [GPLv3](http://gplv3.fsf.org/)
 
+## Nagios Exchange
+It is also available in nagios-exchange: http://exchange.nagios.org/directory/Plugins/Databases/nagios-2Dcouchbase-2Dplugin/details
+
 ##Website
 You can access project website [here](http://yakindanegitim.org/nagios-plugin-couchbase/).
 
